@@ -1,0 +1,309 @@
+#!/bin/sh
+
+set -o noglob
+
+SOURCE=
+PASS=0
+LINE=1
+ORIGIN=0
+LOCATION=0
+MACRO=
+PROCESS=encode
+
+usage()
+{
+	printf "usage: fcasm EXTENSION ...\n"
+}
+
+abort()
+{
+	1>&2 printf "$@"
+	exit 1 
+}
+
+bad_operand_count()
+{
+	abort "line %d: bad operand count\n" $LINE
+}
+
+unrecognised_instruction()
+{
+	abort "line %d: unrecognised instruction\n" $LINE
+}
+
+undefined_label()
+{
+	abort "line %d: undefined label: %s\n" $LINE $1
+}
+
+reject()
+{
+	local response=$1
+	shift 1
+	local test=$@
+
+	if $test
+	then
+		$response
+	fi
+}
+
+origin()
+{
+	ORIGIN=$(($1))
+}
+
+macro()
+{
+	PROCESS=macro
+
+	if [ $PASS -eq 1 ]
+	then
+		if [ "$1" = "endmacro" ]
+		then
+			MACRO="${MACRO} }"
+			eval "$MACRO"
+			MACRO=
+			PROCESS=encode
+
+		elif [ -z "$MACRO" ]
+		then
+			local mnemonic=$1
+			MACROS="${MACROS} $mnemonic"
+			MACRO="$mnemonic() { "
+
+		else
+			MACRO="${MACRO}$@
+"
+		fi
+
+	elif [ $PASS -eq 2 ]
+	then
+		if [ "$1" = "endmacro" ]
+		then
+			PROCESS=encode
+		fi
+	fi
+}
+
+expand()
+{
+	local mnemonic=$1
+	shift 1
+	local operands=$@
+
+	set -- $MACROS
+
+	for macro 
+	do
+	 	if [ $mnemonic = $macro ]
+	 	then
+	 		$macro $operands
+			return $?
+	 	fi
+	done
+
+	unrecognised_instruction
+}
+
+label()
+{
+	local target=$1
+	local labels=
+	local updated=0
+
+	set -- $LABELS
+
+	while [ $# -gt 0 ]
+	do
+		local label=$1
+		local location=$2
+		shift 2
+
+		if [ $label = $target ]
+		then
+			location="$LOCATION"
+			updated=1
+		fi
+
+		labels="$labels $label $location"
+	done
+
+	if [ $updated -eq 0 ]
+	then
+		labels="$labels $target $LOCATION"
+	fi
+
+	LABELS="$labels"
+}
+
+is_numeric()
+{
+	[ $(($1)) -lt 0 -o $(($1)) -ge 0 ] 2>&-
+}
+
+resolve()
+{
+	local target=$1
+
+	set -- $LABELS
+
+	while [ $# -gt 0 ]
+	do
+		local label=$1
+		local location=$2
+		shift 2
+
+		if [ $label = $target ]
+		then
+			return $(($ORIGIN + $location))
+		fi
+	done
+
+	if [ $PASS -eq 1 ]
+	then
+		target=0
+
+	elif [ $PASS -eq 2 ]
+	then
+		if is_numeric $target
+		then
+			return $(($target))
+		else
+			undefined_label $target
+		fi
+	fi
+}
+
+difference()
+{
+	local width=$1
+	resolve $2
+	local offset=$?
+	return $(( (1 << $width) - $LOCATION + $offset + 1 ))
+}
+
+repeat()
+{
+	local count=$1
+	shift 1
+
+	while [ $count -gt 0 ]
+	do
+		encode $@
+		count=$(( $count - 1 ))
+	done
+}
+
+till()
+{
+	local location=$1
+	shift 1
+
+	while [ $LOCATION -lt $location ]
+	do
+		$@
+	done	
+}
+
+byte()
+{
+	if [ $PASS -eq 2 ]
+	then
+		for byte
+		do
+			printf $(printf "\\\%03o" $byte)
+		done
+	fi
+
+	LOCATION=$(($LOCATION + $#))
+}
+
+string()
+{
+	local string=$@
+	string=${string%\"*}
+	string=${string#\"*}
+
+	if [ $PASS -eq 2 ]
+	then
+		printf "%s" "$string"
+	fi
+
+	LOCATION=$(($LOCATION + ${#string}))
+	byte 0
+}
+
+encode_directive()
+{
+	local directive=$1
+	shift 1
+
+	case $directive in
+		"macro")   macro $@ ;;
+		"origin")  origin $@ ;;
+		":")       label $@ ;;
+		"repeat")  repeat $@ ;;
+		"till")    till $@ ;;
+		"byte")    byte $@ ;;
+		"string")  string $@ ;;
+		*)         expand $directive $@ ;;
+	esac
+}
+
+pass1()
+{
+	PASS=1
+	LINE=1
+	LOCATION=0
+ 
+	while read instruction 
+	do
+		instruction=${instruction%%;*}
+
+		if ! [ -z "$instruction" ]
+		then
+			$PROCESS $instruction
+			SOURCE="${SOURCE}${instruction}
+"
+		fi
+
+	 	LINE=$(($LINE + 1))
+	done
+}
+
+pass2()
+{
+	PASS=2
+	LINE=1
+	LOCATION=0
+
+	printf "%s" "$SOURCE" | while read instruction
+	do
+		$PROCESS $instruction
+	 	LINE=$(($LINE + 1))
+	done
+}
+
+assemble()
+{
+	pass1 >&-
+	pass2
+}
+
+main()
+{
+	if [ $# -eq 0 ]
+	then
+		usage
+		exit 2
+	fi
+
+	for target do
+		. $target
+	done
+
+	assemble
+}
+
+main "$@"

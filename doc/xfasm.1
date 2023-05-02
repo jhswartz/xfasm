@@ -1,0 +1,158 @@
+.TH xfasm "1" "May 2023" "xfasm 0.1" "Crossed Fingers Assembler Manual"
+
+.SH NAME
+xfasm \- a bare-bones assembler
+
+.SH SYNOPSIS
+\fBxfasm\fR TARGET ... < SOURCE > OBJECT 
+
+.SH DESCRIPTION
+xfasm is the skeleton of an assembler that requires the end user
+to select one or more instruction encoder scripts for the desired
+target architecture.  At the time of writing, only 8086, 80186 and
+80286 instruction encoders have been implemented. 
+
+.SH DIRECTIVES
+.EX
+\fBmacro\fR NAME
+	encode ...
+\fBendmacro\fR
+.EE
+.RS 4
+Declare an instruction macro.
+Macro parameters are accessible as $1, $2, ...
+.RE
+
+.RS 0
+\fBorigin\fR ADDRESS
+.RE
+.RS 4
+Specify the origin address 
+.RE
+
+.RS 0
+\fB:\fR LABEL 
+.RE
+.RS 4
+Declare a label
+.RE
+
+.RS 0
+\fBrepeat\fR N ...
+.RE
+.RS 4
+Repeat the following instruction N times
+.RE
+
+.RS 0
+\fBtill\fR LOCATION ...
+.RE
+.RS 4
+Repeat the following instruction until location is reached
+.RE
+
+.RS 0
+\fBbyte\fR ...
+.RE
+.RS 4
+Encode the following bytes
+.RE
+
+.RS 0
+\fBstring "\fR...\fB"\fR
+.RE
+.RS 4
+Encode the following string 
+.RE
+
+.RS 0
+\fB;\fR COMMENT
+.RE
+.RS 4
+Provide commentary
+.RE
+
+.SH SOURCE EXAMPLE
+.EX
+macro copyw
+ 	encode movwir $1 cx
+ 	encode movwir $2 si
+ 	encode movwir $3 di
+	encode rep movsw
+endmacro
+
+origin 0x0600
+
+: initialise
+ 	; Disable interrupt handling until relocated.
+	cli
+
+	; Initialise segment registers and stack pointer.
+	xorwrr ax ax
+	movwrs ax ds
+	movwrs ax es
+	movwrs ax ss
+	movwrr ax sp
+ 
+	; Relocate the current sector of code from 0x7c00 to 0x0600.
+	copyw 256 0x7c00 0x0600
+
+	; Jump to start, at its new location, ensuring CS is 0.
+	jmpf 0x0000 start
+ 
+: start
+	; Restore interrupt handling.
+	sti
+ 
+	; Store the boot drive number.
+	movbrm dl boot_drive
+
+	; ...
+
+: padding
+	till 509 byte 0x00
+
+: boot_drive
+	byte 0x00
+
+: magic
+	byte 0x55 0xaa
+.EE
+
+.SH USAGE
+.SS Batch Assembly
+.EX
+$ xfasm arch/x86/xfasm-8086 < arch/x86/example/colours.asm > /tmp/out
+$ qemu-system-i386 -fda /tmp/out -boot a
+.EE
+
+.SS Interactive Assembly
+.EX
+$ while true; do ./xfasm arch/x86/xfasm-8086 | xxd -g 1; done
+pushw 0x2b2b
+\fB^D\fR
+line 1: unrecognised instruction
+\fB^C\fR
+
+$ while true; do ./xfasm arch/x86/xfasm-{8086,80186} | xxd -g 1; done
+pushw 0x2b2b
+\fB^D\fR
+00000000: 68 2b 2b                                         h++
+
+macro copyw
+     encode movwir $1 cx
+     encode movwir $2 si
+     encode movwir $3 di
+     encode rep movsw
+endmacro
+copyw 256 0x7c00 0x0600
+\fB^D\fR
+00000000: b9 00 01 be 00 7c bf 00 06 f3 a5                 .....|.....
+\fB^C\fR
+.EE
+
+.SH AUTHOR
+Justin Swartz <justin.swartz@risingedge.co.za>
+
+.SH SEE ALSO
+xfasm-8086(1), xfasm-80186(1), xfasm-80286(1)

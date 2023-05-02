@@ -1,0 +1,579 @@
+.TH xfasm-80286 "1" "May 2023" "xfasm 0.1" "Crossed Fingers Assembler Manual"
+
+.SH NAME
+xfasm-80286 \- i80286 Instruction Encoder
+
+.SH INSTRUCTIONS
+\&
+.TP
+\fBarplrm\fR
+.RS 4
+Description  \fBAdjust RPL Field of Selector\fR
+.RE
+.RS 4
+Syntax       arplrm register.16 offset.16 
+             arplrm register.16 base displacement.8
+             arplrm register.16 base displacement.16
+             arplrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  arplrm dx 0x4444
+                 63 16 44 44
+             2.  arplrm dx [bx+si] 2
+                 63 50 02
+             3.  arplrm dx [bx+si] 2048 
+                 63 90 00 08
+             4.  arplrm dx [si]
+                 63 d0
+.RE
+
+.TP
+\fBarplrr\fR
+.RS 4
+Description  \fBAdjust RPL Field of Selector\fR
+.RE
+.RS 4
+Syntax       arplrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  arplrr dx ax
+                 63 d0
+.RE
+
+.TP
+\fBclts \fR
+.RS 4
+Description  \fBClear Task Switched Flag\fR
+.RE
+.RS 4
+Syntax       clts
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  clts
+                 0f 06
+.RE
+
+.TP
+\fBlarmr\fR
+.RS 4
+Description  \fBLoad Access Rights Byte\fR
+.RE
+.RS 4
+Syntax       larmr offset.16 register.16
+             larmr base displacement.8 register.16
+             larmr base displacement.16 register.16
+             larmr base register.16
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  larmr 0x4444 dx
+                 0f 02 16 44 44
+             2.  larmr [bx+si] 2 dx
+                 0f 02 50 02
+             3.  larmr [bx+si] 2048 dx
+                 0f 02 90 00 08
+             4.  larmr [si] dx
+                 0f 02 14
+.RE
+
+.TP
+\fBlarrr\fR
+.RS 4
+Description  \fBLoad Access Rights Byte\fR
+.RE
+.RS 4
+Syntax       larrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  larrr ax dx
+                 0f 02 c2
+.RE
+
+.TP
+\fBlgdtwm\fR
+.RS 4
+Description  \fBLoad Global Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       lgdtwm offset.16
+             lgdtwm base displacement.8
+             lgdtwm base displacement.16
+             lgdtwm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  lgdtwm 0x4444
+                 0f 01 16 44 44
+             2.  lgdtwm [bx+si] 2
+                 0f 01 50 02
+             3.  lgdtwm [bx+si] 2048
+                 0f 01 90 00 08
+             4.  lgdtwm [si]
+                 0f 01 14
+.RE
+
+.TP
+\fBlidtwm\fR
+.RS 4
+Description  \fBLoad Interrupt Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       lidtwm offset.16
+             lidtwm base displacement.8
+             lidtwm base displacement.16
+             lidtwm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  lidtwm 0x4444
+                 0f 01 1e 44 44
+             2.  lidtwm [bx+si] 2
+                 0f 01 58 02
+             3.  lidtwm [bx+si] 2048
+                 0f 01 98 00 08
+             4.  lidtwm [si]
+                 0f 01 1c
+.RE
+
+.TP
+\fBlldtm\fR
+.RS 4
+Description  \fBLoad Local Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       lldtm offset.16
+             lldtm base displacement.8
+             lldtm base displacement.16
+             lldtm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  lldtm 0x4444
+                 0f 00 16 44 44
+             2.  lldtm [bx+si] 2
+                 0f 00 50 02
+             3.  lldtm [bx+si] 2
+                 0f 00 90 00 08
+             4.  lldtm [si]
+                 0f 00 14
+.RE
+
+.TP
+\fBlldtr\fR
+.RS 4
+Description  \fBLoad Local Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       lldtr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  lldtr dx 
+                 0f 00 d2
+.RE
+
+.TP
+\fBlmswm\fR
+.RS 4
+Description  \fBLoad Machine Status Word\fR
+.RE
+.RS 4
+Syntax       lmswm offset.16
+             lmswm base displacement.8
+             lmswm base displacement.16
+             lmswm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  lmswm 0x4444
+                 0f 01 36 44 44
+             2.  lmswm [bx+si] 2
+                 0f 01 70 02
+             3.  lmswm [bx+si] 2048
+                 0f 01 b0 00 08
+             4.  lmswm [si]
+                 0f 01 34
+.RE
+
+.TP
+\fBlmswr\fR
+.RS 4
+Description  \fBLoad Machine Status Word\fR
+.RE
+.RS 4
+Syntax       lmswr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  lmswr dx 
+                 0f 01 f2
+.RE
+
+.TP
+\fBlslmr\fR
+.RS 4
+Description  \fBLoad Segment Limit\fR
+.RE
+.RS 4
+Syntax       lslmr offset.16
+             lslmr base displacement.8
+             lslmr base displacement.15
+             lslmr base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  lslmr 0x4444
+                 0f 03 16 44 44
+             2.  lslmr [bx+si] 2
+                 0f 03 50 02
+             3.  lslmr [bx+si] 2048
+                 0f 03 90 00 08
+             4.  lslmr [si]
+                 0f 03 14
+.RE
+
+.TP
+\fBlslrr\fR
+.RS 4
+Description  \fBLoad Segment Limit\fR
+.RE
+.RS 4
+Syntax       lslrr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  lslrr dx 
+                 0f 03 c2
+.RE
+
+.TP
+\fBltrm\fR
+.RS 4
+Description  \fBLoad Task Register\fR
+.RE
+.RS 4
+Syntax       ltrm offset.16
+             ltrm base displacement.8
+             ltrm base displacement.16
+             ltrm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  ltrm 0x4444
+                 0f 00 1e 44 44
+             2.  ltrm [bx+si] 2
+                 0f 00 58 02
+             3.  ltrm [bx+si] 2048
+                 0f 00 98 00 08
+             4.  ltrm [si]
+                 0f 00 1c
+.RE
+
+.TP
+\fBltrr\fR
+.RS 4
+Description  \fBLoad Task Register\fR
+.RE
+.RS 4
+Syntax       ltrr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  ltrr dx 
+                 0f 00 da 
+.RE
+
+.TP
+\fBsgdtwm\fR
+.RS 4
+Description  \fBStore Global Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       sgdtwm offset.16
+             sgdtwm base displacement.8
+             sgdtwm base displacement.16
+             sgdtwm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  sgdtwm 0x4444
+                 0f 01 06 44 44
+             2.  sgdtwm [bx+si] 2
+                 0f 01 40 02
+             3.  sgdtwm [bx+si] 2048
+                 0f 01 80 00 08
+             4.  sgdtwm [si]
+                 0f 01 04
+.RE
+
+.TP
+\fBsidtwm\fR
+.RS 4
+Description  \fBStore Interrupt Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       sidtwm offset.16
+             sidtwm base displacement.8
+             sidtwm base displacement.16
+             sidtwm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  sidtwm 0x4444
+                 0f 01 0e 44 44
+             2.  sidtwm [bx+si] 2
+                 0f 01 48 02
+             3.  sidtwm [bx+si] 2048
+                 0f 01 88 00 08
+             4.  sidtwm [si]
+                 0f 01 0c
+.RE
+
+.TP
+\fBsldtm\fR
+.RS 4
+Description  \fBLoad Local Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       sldtm offset.16
+             sldtm base displacement.8
+             sldtm base displacement.16
+             sldtm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  sldtm 0x4444
+                 0f 00 06 44 44
+             2.  sldtm [bx+si] 2
+                 0f 00 40 02
+             3.  sldtm [bx+si] 2048
+                 0f 00 80 00 08
+             4.  sldtm [si]
+                 0f 00 04
+.RE
+
+.TP
+\fBsldtr\fR
+.RS 4
+Description  \fBStore Local Descriptor Table Register\fR
+.RE
+.RS 4
+Syntax       sldtr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  sldtr dx 
+                 0f 00 c2
+.RE
+
+.TP
+\fBsmswm\fR
+.RS 4
+Description  \fBStore Machine Status Word\fR
+.RE
+.RS 4
+Syntax       smswm offset.16
+             smswm base displacement.8
+             smswm base displacement.16
+             smswm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  smswm 0x4444
+                 0f 01 26 44 44
+             2.  smswm [bx+si] 2
+                 0f 01 60 02
+             3.  smswm [bx+si] 2048
+                 0f 01 a0 00 08
+             4.  smswm [si]
+                 0f 01 24
+.RE
+
+.TP
+\fBsmswr\fR
+.RS 4
+Description  \fBStore Machine Status Word\fR
+.RE
+.RS 4
+Syntax       smswr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  smswr dx 
+                 0f 01 e2
+.RE
+
+.TP
+\fBstrm\fR
+.RS 4
+Description  \fBStore Task Register\fR
+.RE
+.RS 4
+Syntax       strm offset.16
+             strm base displacement.8
+             strm base displacement.16
+             strm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  strm 0x4444
+                 0f 00 0e 44 44
+             2.  strbd [bx+si] 2
+                 0f 00 48 02
+             3.  strbd [bx+si] 2048
+                 0f 00 88 00 08
+             4.  strm [si]
+                 0f 00 0c
+.RE
+
+.TP
+\fBstrr\fR
+.RS 4
+Description  \fBStore Task Register\fR
+.RE
+.RS 4
+Syntax       strr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  strr dx 
+                 0f 00 ca 
+.RE
+
+.TP
+\fBverrm\fR
+.RS 4
+Description  \fBVerify a Segment for Reading\fR
+.RE
+.RS 4
+Syntax       verrm offset.16
+             verrm base displacement.8
+             verrm base displacement.16
+             verrm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  verrm 0x4444
+                 0f 00 26 44 44
+             2.  verrm [bx+si] 2
+                 0f 00 60 02
+             3.  verrm [bx+si] 2048
+                 0f 00 a0 00 08
+             4.  verrm [si]
+                 0f 00 24
+.RE
+
+.TP
+\fBverrr\fR
+.RS 4
+Description  \fBVerify a Segment for Reading\fR
+.RE
+.RS 4
+Syntax       verrr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  verrr dx 
+                 0f 00 e2
+.RE
+
+.TP
+\fBverwm\fR
+.RS 4
+Description  \fBVerify a Segment for Writing\fR
+.RE
+.RS 4
+Syntax       verwm offset.16
+             verwm base displacement.8
+             verwm base displacement.16
+             verwm base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  verwm 0x4444
+                 0f 00 2e 44 44
+             2.  verwm [bx+si] 2
+                 0f 00 68 02
+             3.  verwm [bx+si] 2048
+                 0f 00 a8 00 08
+             4.  verwm [si]
+                 0f 00 2c
+.RE
+
+.TP
+\fBverwr\fR
+.RS 4
+Description  \fBVerify a Segment for Writing\fR
+.RE
+.RS 4
+Syntax       verwr register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  verwr dx 
+                 0f 00 ea
+.RE
+
+.SH AUTHOR
+Justin Swartz <justin.swartz@risingedge.co.za>
+
+.SH SEE ALSO
+xfasm-80186(1), xfasm-8086(1), and the "Intel iAPX 80286 and 80287 Programmer's Reference Manual"

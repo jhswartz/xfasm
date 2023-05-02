@@ -1,0 +1,7216 @@
+.TH xfasm-8086 "1" "May 2023" "xfasm 0.1" "Crossed Fingers Assembler Manual"
+
+.SH NAME
+xfasm-8086 \- i8086 Instruction Encoder
+
+.SH BRANCH TYPES 
+.TP
+\fBnear\fR (intrasegment)
+Confined to CS
+.TP
+\fBshort\fR (intrasegment)
+IP-relative by -128 to 127 bytes
+.TP
+\fBfar\fR (intersegment)
+Not confined to CS
+
+.SH BASES
+.RS 0
+[bx+si]
+.RE
+.RS 0
+[bx+di]
+.RE
+.RS 0
+[bp+si]
+.RE
+.RS 0
+[bp+di]
+.RE
+.RS 0
+[si]
+.RE
+.RS 0
+[di]
+.RE
+.RS 0
+[bp]
+.RE
+.RS 0
+[bx]
+.RE
+
+.SH INSTRUCTIONS
+\&
+.TP 
+\fBaaa\fR
+.RS 4
+Description  \fBASCII adjust AX after Addition\fR
+.RE
+.RS 4
+Syntax       aaa
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  aaa
+                 37
+.RE
+
+.TP
+\fBaad\fR
+.RS 4
+Description  \fBASCII adjust AX before Division\fR
+.RE
+.RS 4
+Syntax       aad
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  aad
+                 d5 0a
+.RE
+
+.TP
+\fBaam\fR
+.RS 4
+Description  \fBASCII adjust AX after Multiplication\fR
+.RE
+.RS 4
+Syntax       aam
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  aam
+                 d4 0a
+.RE
+
+.TP
+\fBaas\fR
+.RS 4
+Description  \fBASCII adjust AL after Subtraction\fR
+.RE
+.RS 4
+Syntax       aas
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  aas
+                 3f
+.RE
+
+.TP
+\fBadcb8m\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       adcb8m immediate.8 offset.16
+             adcb8m immediate.8 base displacement.8
+             adcb8m immediate.8 base displacement.16
+             adcb8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  adcb8m 0x66 0x4444
+                 82 16 44 44 66
+             2.  adcb8m 0x66 [bx+si] 2
+                 82 50 02 66
+             3.  adcb8m 0x66 [bx+si] 2048
+                 82 90 00 02 66
+             4.  adcb8m 0x66 [si]
+                 82 14 66
+.RE
+
+.TP
+\fBadcb8r\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       adcb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  adcb8r 0x66 dl
+                 82 d2 66
+.RE
+
+.TP
+\fBadcbi\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       adcbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  adcbi 0x66
+                 14 66 
+.RE
+
+.TP
+\fBadcbim\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       adcbim immediate.8 offset.16
+             adcbim immediate.8 base displacement.8
+             adcbim immediate.8 base displacement.16
+             adcbim immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  adcbim 0x66 0x4444
+                 80 16 44 44 66 
+             2.  adcbim 0x66 [bx+si] 2
+                 80 50 02 66
+             3.  adcbim 0x66 [bx+si] 2048
+                 80 90 00 08 66
+             4.  adcbim 0x66 [si]
+                 80 14 66 
+.RE
+
+.TP
+\fBadcbir\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       adcbir immediate.8 register.8 
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  adcbir 0x66 dl
+                 80 d2 66 
+.RE
+
+.TP
+\fBadcbmr\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - Memory, Register\fR
+.RE
+.RS 4
+Syntax       adcbmr offset.16 register.8
+             adcbmr base displacement.8 register.8
+             adcbmr base displacement.16 register.8
+             adcbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  adcbmr 0x4444 dl
+                 12 16 44 44 
+             2.  adcbmr [bx+si] 2 dl
+                 12 50 02
+             3.  adcbmr [bx+si] 2048 dl
+                 12 90 00 08
+             4.  adcbmr [si] dl
+                 12 14 
+.RE
+
+.TP
+\fBadcbrm\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - Register, Memory\fR
+.RE
+.RS 4
+Syntax       adcbrm register.8 offset.16
+             adcbrm register.8 base displacement.8
+             adcbrm register.8 base displacement.16
+             adcbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  adcbrm dl 0x4444
+                 10 16 44 44 
+             2.  adcbrm dl [bx+si] 2
+                 10 50 02
+             2.  adcbrm dl [bx+si] 2048
+                 10 90 00 08
+             4.  adcbrm dl [si]
+                 10 14 
+.RE
+
+.TP
+\fBadcbrr\fR
+.RS 4
+Description  \fBAdd Bytes with Carry - Register, Register\fR
+.RE
+.RS 4
+Syntax       adcbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  adcbrr dl al
+                 10 d0
+.RE
+
+.TP
+\fBadcw8m\fR
+.RS 4
+Description  \fBAdd Words with Carry - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       adcw8m immediate.8 offset.16
+             adcw8m immediate.8 base displacement.8
+             adcw8m immediate.8 base displacement.16
+             adcw8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  adcw8m 0x66 0x4444
+                 83 16 44 44 66
+             2.  adcw8m 0x66 [bx+si] 2
+                 83 50 02 66
+             3.  adcw8m 0x66 [bx+si] 2048
+                 83 90 00 08 66
+             4.  adcw8m 0x66 [si]
+                 83 14 66
+.RE
+
+.TP
+\fBadcw8r\fR
+.RS 4
+Description  \fBAdd Words with Carry - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       adcw8r immediate.8 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  adcw8r 0x66 dx 
+                 83 d2 66 
+.RE
+
+.TP
+\fBadcwi\fR
+.RS 4
+Description  \fBAdd Words with Carry - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       adcwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  adcwi 0x4444
+                 15 44 44
+.RE
+
+.TP
+\fBadcwim\fR
+.RS 4
+Description  \fBAdd Words with Carry - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       adcwim immediate.16 offset.16
+             adcwim immediate.16 base displacement.8
+             adcwim immediate.16 base displacement.16
+             adcwim immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  adcwim 0x4444 0x6666
+                 81 16 66 66 44 44
+             2.  adcwim 0x4444 [bx+si] 2
+                 81 50 02 44 44
+             3.  adcwim 0x4444 [bx+si] 2048
+                 81 90 00 08 44 44
+             4.  adcwim 0x4444 [si]
+                 81 14 44 44
+.RE
+
+.TP
+\fBadcwir\fR
+.RS 4
+Description  \fBAdd Words with Carry - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       adcwir immediate.16 register.16
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  adcwir 0x4444 dx
+                 81 d2 44 44
+.RE
+
+.TP
+\fBadcwmr\fR
+.RS 4
+Description  \fBAdd Words with Carry - Memory, Register\fR
+.RE
+.RS 4
+Syntax       adcwmr offset.16 register.16
+             adcwmr base displacement.8 register.16
+             adcwmr base displacement.16 register.16
+             adcwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  adcwmr 0x4444 dx
+                 13 16 44 44 
+             2.  adcwmr [bx+si] 2 dx
+                 13 50 02 
+             3.  adcwmr [bx+si] 2048 dx
+                 13 90 00 08
+             4.  adcwmr [si] dx
+                 13 14 
+.RE
+
+.TP
+\fBadcwrm\fR
+.RS 4
+Description  \fBAdd Words with Carry - Register, Memory\fR
+.RE
+.RS 4
+Syntax       adcwrm register.16 offset.16
+             adcwrm register.16 base displacement.8
+             adcwrm register.16 base displacement.16
+             adcwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  adcwrm dx 0x4444
+                 11 16 44 44 
+             2.  adcwrm dx [bx+si] 2
+                 11 50 02
+             3.  adcwrm dx [bx+si] 2048
+                 11 90 00 08
+             4.  adcwrm dx [si]
+                 11 14 
+.RE
+
+.TP
+\fBadcwrr\fR
+.RS 4
+Description  \fBAdd Words with Carry - Register, Register\fR
+.RE
+.RS 4
+Syntax       adcwrr register.16 register.16 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  adcwrr dx ax
+                 11 d0
+.RE
+
+.TP
+\fBaddb8m\fR
+.RS 4
+Description  \fBAdd Bytes - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       addb8m immediate.8 offset.16
+             addb8m immediate.8 base displacement.8
+             addb8m immediate.8 base displacement.16
+             addb8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  addb8m 0x66 0x4444
+                 82 06 44 44 66
+             2.  addb8m 0x66 [bx+si] 2
+                 82 40 02 66
+             3.  addb8m 0x66 [bx+si] 2048
+                 82 80 00 08 66
+             4.  addb8m 0x66 [si]
+                 82 04 66
+.RE
+
+.TP
+\fBaddb8r\fR
+.RS 4
+Description  \fBAdd Bytes - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       addb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  addb8r 0x66 dl
+                 82 c2 66
+.RE
+
+.TP
+\fBaddbi\fR
+.RS 4
+Description  \fBAdd Bytes - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       addbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  addbi 0x66
+                 04 66
+.RE
+
+.TP
+\fBaddbim\fR
+.RS 4
+Description  \fBAdd Bytes - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       addbim immediate.8 offset.16
+             addbim immediate.8 base displacement.8
+             addbim immediate.8 base displacement.16
+             addbim immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  addbim 0x66 0x4444
+                 80 06 44 44 66
+             2.  addbim 0x66 [bx+si] 2
+                 80 40 02 66
+             3.  addbim 0x66 [bx+si] 2048
+                 80 80 00 08 66
+             4.  addbim 0x66 [si]
+                 80 04 66
+.RE
+
+.TP
+\fBaddbir\fR
+.RS 4
+Description  \fBAdd Bytes - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       addbir immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  addbir 0x66 dl
+                 80 c2 66
+.RE
+
+.TP
+\fBaddbmr\fR
+.RS 4
+Description  \fBAdd Bytes - Memory, Register\fR
+.RE
+.RS 4
+Syntax       addbmr offset.16 register.8
+             addbmr base displacement.8 register.8
+             addbmr base displacement.16 register.8
+             addbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  addbmr 0x4444 dl
+                 02 16 44 44
+             2.  addbmr [bx+si] 2 dl
+                 02 50 02
+             3.  addbmr [bx+si] 2048 dl
+                 02 90 00 08
+             4.  addbmr [si] dl
+                 02 14
+.RE
+
+.TP
+\fBaddbrm\fR
+.RS 4
+Description  \fBAdd Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       addbrm register.8 offset.16
+             addbrm register.8 base displacement.8
+             addbrm register.8 base displacement.16
+             addbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  addbrm dl 0x4444
+                 00 16 44 44
+             2.  addbrm dl [bx+si] 2
+                 00 50 02
+             3.  addbrm dl [bx+si] 2048
+                 00 90 00 08
+             4.  addbrm dl [si]
+                 00 14
+.RE
+
+.TP
+\fBaddbrr\fR
+.RS 4
+Description  \fBAdd Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       addbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  addbrr dl al
+                 00 d0
+.RE
+
+.TP
+\fBaddw8m\fR
+.RS 4
+Description  \fBAdd Words - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       addw8m immediate.8 offset.16
+             addw8m immediate.8 base displacement.8
+             addw8m immediate.8 base displacement.16
+             addw8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  addw8m 0x66 0x4444
+                 83 06 44 44 66
+             2.  addw8m 0x66 [bx+si] 2
+                 83 40 02 66
+             3.  addw8m 0x66 [bx+si] 2048
+                 83 80 00 08 66
+             4.  addw8m 0x66 [si]
+                 83 04 66
+.RE
+
+.TP
+\fBaddw8r\fR
+.RS 4
+Description  \fBAdd Words - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       addw8r immediate.8 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  addw8r 0x66 dx
+                 83 c2 66
+.RE
+
+.TP
+\fBaddwi\fR
+.RS 4
+Description  \fBAdd Words - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       addwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  addwi 0x4444
+                 05 44 44
+.RE
+
+.TP
+\fBaddwim\fR
+.RS 4
+Description  \fBAdd Words - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       addwim immediate.16 offset.16
+             addwim immediate.16 base displacement.8
+             addwim immediate.16 base displacement.16
+             addwim immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  addwim 0x4444 0x6666
+                 81 06 66 66 44 44
+             2.  addwim 0x4444 [bx+si] 2
+                 81 40 02 44 44
+             3.  addwim 0x4444 [bx+si] 2048
+                 81 80 00 08 44 44
+             4.  addwim 0x4444 [si]
+                 81 04 44 44
+.RE
+
+.TP
+\fBaddwir\fR
+.RS 4
+Description  \fBAdd Words - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       addwir immediate.16 register.16
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  addwir 0x4444 dx
+                 81 c2 44 44
+.RE
+
+.TP
+\fBaddwmr\fR
+.RS 4
+Description  \fBAdd Words - Memory, Register\fR
+.RE
+.RS 4
+Syntax       addwmr offset.16 register.16
+             addwmr base displacement.8 register.16
+             addwmr base displacement.16 register.16
+             addwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  addwmr 0x4444 dx
+                 03 16 44 44
+             2.  addwmr [bx+si] 2 dx
+                 03 50 02
+             3.  addwmr [bx+si] 2048 dx
+                 03 90 00 08
+             4.  addwmr [si] dx
+                 03 14
+.RE
+
+.TP
+\fBaddwrm\fR
+.RS 4
+Description  \fBAdd Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       addwrm register.16 offset.16
+             addwrm register.16 base displacement.8
+             addwrm register.16 base displacement.16
+             addwrm register.16 base
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  addwrm dx 0x4444
+                 01 16 44 44
+             2.  addwrm dx [bx+si] 2
+                 01 50 02
+             3.  addwrm dx [bx+si] 2048
+                 01 90 00 08
+             4.  addwrm dx [si]
+                 01 14
+.RE
+
+.TP
+\fBaddwrr\fR
+.RS 4
+Description  \fBAdd Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       addwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  addwrr dx ax
+                 01 d0
+.RE
+
+.TP
+\fBandb8m\fR
+.RS 4
+Description  \fBAND Bytes - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       andb8m immediate.8 offset.16
+             andb8m immediate.8 base displacement.8
+             andb8m immediate.8 base displacement.16
+             andb8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  andb8m 0x66 0x4444
+                 82 26 44 44 66
+             2.  andb8m 0x66 [bx+si] 2
+                 82 60 02 66
+             3.  andb8m 0x66 [bx+si] 2048
+                 82 a0 00 08 66
+             4.  andb8m 0x66 [si]
+                 82 24 66
+.RE
+
+.TP
+\fBandb8r\fR
+.RS 4
+Description  \fBAND Bytes - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       andb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  andb8r 0x66 dl
+                 82 e2 66 
+.RE
+
+.TP
+\fBandbi\fR
+.RS 4
+Description  \fBAND Bytes - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       andbi immediate.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  andbi 0x66
+                 24 66
+.RE
+
+.TP
+\fBandbim\fR
+.RS 4
+Description  \fBAND Bytes - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       andbim immediate.8 offset.16
+             andbim immediate.8 base displacement.8
+             andbim immediate.8 base displacement.16
+             andbim immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  andbim 0x66 0x4444
+                 80 26 44 44 66 
+             2.  andbim 0x66 [bx+si] 2
+                 80 60 02 66 
+             3.  andbim 0x66 [bx+si] 2048
+                 80 a0 00 08 66 
+             4.  andbim 0x66 [si]
+                 80 24 66
+.RE
+
+.TP
+\fBandbir\fR
+.RS 4
+Description  \fBAND Bytes - Immediate,  Register\fR
+.RE
+.RS 4
+Syntax       andbir immediate.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  andbir 0x66 dl
+                 80 e2 66
+.RE
+
+.TP
+\fBandbmr\fR
+.RS 4
+Description  \fBAND Bytes - Memory, Register\fR
+.RE
+.RS 4
+Syntax       andbmr offset.16 register.8
+             andbmr base displacement.8 register.8
+             andbmr base displacement.8 register.16
+             andbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  andbmr 0x4444 dl
+                 22 16 44 44
+             2.  andbmr [bx+si] 2 dl
+                 22 50 02 
+             3.  andbmr [bx+si] 2048 dl
+                 22 90 00 08 
+             4.  andbmr [si] dl
+                 22 14 
+.RE
+
+.TP
+\fBandbrm\fR
+.RS 4
+Description  \fBAND Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       andbrm register.8 offset.16
+             andbrm register.8 base displacement.8
+             andbrm register.8 base displacement.16
+             andbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  andbrm dl 0x4444
+                 20 16 44 44
+             2.  andbrm dl [bx+si] 2
+                 20 50 02
+             3.  andbrm dl [bx+si] 2048
+                 20 90 00 08
+             4.  andbrm dl [si]
+                 20 14
+.RE
+
+.TP
+\fBandbrr\fR
+.RS 4
+Description  \fBAND Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       andbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  andbrr dl al
+                 20 d0 
+.RE
+
+.TP
+\fBandw8m\fR
+.RS 4
+Description  \fBAND Words - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       andw8m immediate.8 offset.16
+             andw8m immediate.8 base displacement.8
+             andw8m immediate.8 base displacement.16
+             andw8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  andw8m 0x66 0x4444
+                 83 26 44 44 66
+             2.  andw8m 0x66 [bx+si] 2
+                 83 60 02 66
+             3.  andw8m 0x66 [bx+si] 2048
+                 83 a0 00 08 66
+             4.  andw8m 0x66 [si]
+                 83 24 66
+.RE
+
+.TP
+\fBandw8r\fR
+.RS 4
+Description  \fBAND Words - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       andw8r immediate.8 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  andw8r 0x66 dx
+                 83 e2 66 
+.RE
+
+.TP
+\fBandwi\fR
+.RS 4
+Description  \fBAND Words - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       andwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  andwi 0x4444
+                 25 44 44
+.RE
+
+.TP
+\fBandwim\fR
+.RS 4
+Description  \fBAND Words - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       andwim immediate.16 offset.16
+             andwim immediate.16 base displacement.8
+             andwim immediate.16 base displacement.16
+             andwim immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  andwim 0x4444 0x6666
+                 81 26 66 66 44 44
+             2.  andwim 0x4444 [bx+si] 2
+                 81 60 02 44 44
+             3.  andwim 0x4444 [bx+si] 2048
+                 81 a0 00 08 44 44
+             4.  andwim 0x4444 [si]
+                 81 24 44 44
+.RE
+
+.TP
+\fBandwir\fR
+.RS 4
+Description  \fBAND Words - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       andwir immediate.16 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  andwir 0x6666 dx
+                 81 e2 66 66
+.RE
+
+.TP
+\fBandwmr\fR
+.RS 4
+Description  \fBAND Words - Memory, Register\fR
+.RE
+.RS 4
+Syntax       andwmr offset.16 register.16
+             andwmr base displacement.8 register.16
+             andwmr base displacement.16 register.16
+             andwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  andwmr 0x4444 dx
+                 23 16 44 44
+             2.  andwmr [bx+si] 2 dx
+                 23 50 02 
+             3.  andwmr [bx+si] 2048 dx
+                 23 90 00 08 
+             4.  andwmr [si] dx
+                 23 14 
+.RE
+
+.TP
+\fBandwrm\fR
+.RS 4
+Description  \fBAND Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       andwrm register.16 offset.16
+             andwrm register.16 base displacement.8
+             andwrm register.16 base displacement.16
+             andwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  andwrm dx 0x4444
+                 21 16 44 44
+             2.  andwrm dx [bx+si] 2
+                 21 50 02
+             3.  andwrm dx [bx+si] 2048
+                 21 90 00 08
+             4.  andwrm dx [si]
+                 21 14
+.RE
+
+.TP
+\fBandwrr\fR
+.RS 4
+Description  \fBAND Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       andwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  andwrr dx ax
+                 21 d0 
+.RE
+
+.TP
+\fBcallf\fR
+.RS 4
+Description  \fBFar Call\fR
+.RE
+.RS 4
+Syntax       callf segment.16 offset.16 
+.RE
+.RS 4
+Size         5
+.RE
+.RS 4
+Example      1.  callf 0x4444 0x0066
+                 9a 66 00 44 44
+.RE
+
+.TP
+\fBcallfm\fR
+.RS 4
+Description  \fBIndirect Far Call\fR
+.RE
+.RS 4
+Syntax       callfm offset.16 
+             callfm base displacement.8
+             callfm base displacement.16
+             callfm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  callfm 0x4444
+                 ff 1e 44 44
+             2.  callfm [bx+si] 2
+                 ff 58 02
+             3.  callfm [bx+si] 2048
+                 ff 98 00 08
+             4.  callfm [si]
+                 ff 1c
+.RE
+
+.TP
+\fBcalln\fR
+.RS 4
+Description  \fBNear Call\fR
+.RE
+.RS 4
+Syntax       calln displacement.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  calln 0x4444
+                 e8 44 44
+.RE
+
+.TP
+\fBcallnm\fR
+.RS 4
+Description  \fBIndirect Near Call\fR
+.RE
+.RS 4
+Syntax       callnm offset.16 
+             callnm base displacement.8
+             callnm base displacement.16
+             callnm base
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  callnm 0x4444
+                 ff 16 44 44
+             2.  callnm [bx+si] 2
+                 ff 50 02 
+             3.  callnm [bx+si] 2048
+                 ff 90 00 08
+             4.  callnm [si]
+                 ff 14
+.RE
+
+.TP
+\fBcallnr\fR
+.RS 4
+Description  \fBNear Call via Register\fR
+.RE
+.RS 4
+Syntax       callnr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  callnr dx
+                 ff d2 
+.RE
+
+.TP
+\fBcbw\fR
+.RS 4
+Description  \fBConvert Byte (AL) to Word (AX)\fR
+.RE
+.RS 4
+Syntax       cbw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cbw
+                 98
+.RE
+
+.TP
+\fBclc\fR
+.RS 4
+Description  \fBClear Carry Flag\fR
+.RE
+.RS 4
+Syntax       clc
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  clc
+                 f8
+.RE
+
+.TP
+\fBcld\fR
+.RS 4
+Description  \fBClear Direction Flag\fR
+.RE
+.RS 4
+Syntax       cld
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cld
+                 fc
+.RE
+
+.TP
+\fBcli\fR
+.RS 4
+Description  \fBClear Interrupt Flag\fR
+.RE
+.RS 4
+Syntax       cli
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cli
+                 fa
+.RE
+
+.TP
+\fBcmc\fR
+.RS 4
+Description  \fBComplement Carry Flag\fR
+.RE
+.RS 4
+Syntax       cmc
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cmc
+                 f5
+.RE
+
+.TP
+\fBcmpb8m\fR
+.RS 4
+Description  \fBCompare Bytes - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       cmpb8m immediate.8 offset.16
+             cmpb8m immediate.8 base displacement.8
+             cmpb8m immediate.8 base displacement.16
+             cmpb8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  cmpb8m 0x66 0x4444
+                 82 3e 44 44 66 
+             2.  cmpb8m 0x66 [bx+si] 2
+                 82 78 02 66 
+             3.  cmpb8m 0x66 [bx+si] 2048
+                 82 b8 00 08 66 
+             4.  cmpb8m 0x66 [si]
+                 82 3c 66  
+.RE
+
+.TP
+\fBcmpb8r\fR
+.RS 4
+Description  \fBCompare Bytes - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       cmpb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  cmpb8r 0x66 dl
+                 82 fa 66
+.RE
+
+.TP
+\fBcmpbi\fR
+.RS 4
+Description  \fBCompare Bytes - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       cmpbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  cmpbi 0x66
+                 3c 66
+.RE
+
+.TP
+\fBcmpbim\fR
+.RS 4
+Description  \fBCompare Bytes - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       cmpbim immediate.8 offset.16
+             cmpbim immediate.8 base displacement.8
+             cmpbim immediate.8 base displacement.16
+             cmpbim immediate.8 base
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  cmpbim 0x66 0x4444
+                 80 3e 44 44 66 
+             2.  cmpbim 0x66 [bx+si] 2
+                 80 78 02 66
+             3.  cmpbim 0x66 [bx+si] 2
+                 80 b8 00 08 66
+             4.  cmpbim 0x66 [si]
+                 80 3c 66
+.RE
+
+.TP
+\fBcmpbir\fR
+.RS 4
+Description  \fBCompare Bytes - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       cmpbir immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  cmpbir 0x66 dl
+                 80 fa 66
+.RE
+
+.TP
+\fBcmpbmr\fR
+.RS 4
+Description  \fBCompare Bytes - Memory, Register\fR
+.RE
+.RS 4
+Syntax       cmpbmr offset.16 register.8
+             cmpbmr base displacement.8 register.8 
+             cmpbmr base displacement.16 register.8
+             cmpbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  cmpbmr 0x4444 dl
+                 3a 16 44 44
+             2.  cmpbmr [bx+si] 2 dl
+                 3a 50 02
+             3.  cmpbmr [bx+si] 2048 dl
+                 3a 90 00 08
+             4.  cmpbmr [si] dx
+                 3a 14
+.RE
+
+.TP
+\fBcmpbrm\fR
+.RS 4
+Description  \fBCompare Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       cmpbrm register.8 offset.16
+             cmpbrm register.8 base displacement.8
+             cmpbrm register.8 base displacement.16
+             cmpbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  cmpbrm dl 0x4444
+                 38 16 44 44
+             2.  cmpbrm dl [bx+si] 2
+                 38 50 02
+             3.  cmpbrm dl [bx+si] 2048
+                 38 90 00 08
+             4.  cmpbrm dl [si]
+                 38 14
+.RE
+
+.TP
+\fBcmpbrr\fR
+.RS 4
+Description  \fBCompare Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       cmpbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  cmpbrr dl al 
+                 3a d0
+.RE
+
+.TP
+\fBcmpsb\fR
+.RS 4
+Description  \fBCompare String Bytes - DS:SI, ES:DI\fR
+.RE
+.RS 4
+Syntax       cmpsb
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cmpsb
+                 a6
+.RE
+
+.TP
+\fBcmpsw\fR
+.RS 4
+Description  \fBCompare String Words - DS:SI, ES:DI\fR
+.RE
+.RS 4
+Syntax       cmpsw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cmpsw
+                 a7
+.RE
+
+.TP
+\fBcmpw8m\fR
+.RS 4
+Description  \fBCompare Words - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       cmpw8m immediate.8 offset.16
+             cmpw8m immediate.8 base displacement.8
+             cmpw8m immediate.8 base displacement.16
+             cmpw8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  cmpw8m 0x66 0x4444
+                 83 3e 44 44 66 
+             2.  cmpw8m 0x66 [bx+si] 2
+                 83 78 02 66 
+             3.  cmpw8m 0x66 [bx+si] 2048
+                 83 b8 00 08 66 
+             4.  cmpw8m 0x66 [si]
+                 83 3c 66  
+.RE
+
+.TP
+\fBcmpw8r\fR
+.RS 4
+Description  \fBCompare Words - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       cmpw8r immediate.8 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  cmpw8r 0x66 dx
+                 83 fa 66
+.RE
+
+.TP
+\fBcmpwi\fR
+.RS 4
+Description  \fBCompare Words - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       cmpwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  cmpwi 0x4444
+                 3d 44 44
+.RE
+
+.TP
+\fBcmpwim\fR
+.RS 4
+Description  \fBCompare Words - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       cmpwim immediate.16 offset.16
+             cmpwim immediate.16 base displacement.8
+             cmpwim immediate.16 base displacement.16
+             cmpwim immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  cmpwim 0x6666 0x4444
+                 81 3e 44 44 66 66 
+             2.  cmpwim 0x4444 [bx+si] 2
+                 81 78 02 44 44 
+             3.  cmpwim 0x4444 [bx+si] 2048
+                 81 b8 00 08 44 44 
+             4.  cmpwim 0x4444 [si]
+                 81 3c 44 44
+.RE
+
+.TP
+\fBcmpwir\fR
+.RS 4
+Description  \fBCompare Words - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       cmpwir immediate.16 register.16
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  cmpwir 0x4444 dx
+                 81 fa 44 44
+.RE
+
+.TP
+\fBcmpwmr\fR
+.RS 4
+Description  \fBCompare Words - Memory, Register\fR
+.RE
+.RS 4
+Syntax       cmpwmr offset.16 register.16 
+             cmpwmr base displacement.8 register.16 
+             cmpwmr base displacement.16 register.16 
+             cmpwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  cmpwmr 0x4444 dx
+                 3b 16 44 44
+             2.  cmpwmr [bx+si] 2 dx
+                 3b 50 02
+             3.  cmpwmr [bx+si] 2048 dx
+                 3b 90 00 08
+             4.  cmpwmr [si] dx
+                 3b 14
+.RE
+
+.TP
+\fBcmpwrm\fR
+.RS 4
+Description  \fBCompare Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       cmpwrm register.16 offset.16
+             cmpwrm register.16 base displacement.8
+             cmpwrm register.16 base displacement.16
+             cmpwrm register.16 base
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  cmpwrm dx 0x4444
+                 39 16 44 44
+             2.  cmpwrm dx [bx+si] 2
+                 39 50 02
+             3.  cmpwrm dx [bx+si] 2048
+                 39 90 00 08
+             4.  cmpwrm dx [si]
+                 39 14
+.RE
+
+.TP
+\fBcmpwrr\fR
+.RS 4
+Description  \fBCompare Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       cmpwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  cmpwrr dx ax 
+                 3b d0
+.RE
+
+.TP
+\fBcs\fR
+.RS 4
+Description  \fBCS Override\fR
+.RE
+.RS 4
+Syntax       cs instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cs movwmr 0x4444 dx
+                 2e 8b 16 44 44 
+.RE
+
+.TP
+\fBcwd\fR
+.RS 4
+Description  \fBConvert Word (AX) to Double Word (DX:AX)\fR
+.RE
+.RS 4
+Syntax       cwd
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  cwd
+                 99 
+.RE
+
+.TP
+\fBdaa\fR
+.RS 4
+Description  \fBDecimal Adjust after Addition\fR
+.RE
+.RS 4
+Syntax       daa
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  daa
+                 27
+.RE
+
+.TP
+\fBdas\fR
+.RS 4
+Description  \fBDecimal Adjust after Subtraction\fR
+.RE
+.RS 4
+Syntax       das
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  das
+                 2f
+.RE
+
+.TP
+\fBdecm\fR
+.RS 4
+Description  \fBDecrement Memory Byte\fR
+.RE
+.RS 4
+Syntax       decbm offset.16 
+             decbm base displacement.8
+             decbm base displacement.16
+             decbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  decbm 0x4444
+                 fe 0e 44 44
+             2.  decbm [bx+si] 2
+                 fe 48 02
+             3.  decbm [bx+si] 2048
+                 fe 88 00 08
+             4.  decbm [si]
+                 fe 0c
+.RE
+
+.TP
+\fBdecbr\fR
+.RS 4
+Description  \fBDecrement Byte Register\fR
+.RE
+.RS 4
+Syntax       decbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  decbr dl
+                 fe ca
+.RE
+
+.TP
+\fBdecwm\fR
+.RS 4
+Description  \fBDecrement Memory Word\fR
+.RE
+.RS 4
+Syntax       decwm offset.16 
+             decwm base displacement.8
+             decwm base displacement.16
+             decwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  decwm 0x4444
+                 ff 0e 44 44
+             2.  decwm [bx+si] 2
+                 ff 48 02
+             3.  decwm [bx+si] 2048
+                 ff 88 00 08
+             4.  decwm [si]
+                 ff 0c
+.RE
+
+.TP
+\fBdecwr\fR
+.RS 4
+Description  \fBDecrement Word Register\fR
+.RE
+.RS 4
+Syntax       decwr register.16
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  decwr dx
+                 4a
+.RE
+
+.TP
+\fBdivbm\fR
+.RS 4
+Description  \fBDivide Bytes (Unsigned) - AL, Memory\fR
+.RE
+.RS 4
+Syntax       divbm offset.16
+             divbm base displacement.8
+             divbm base displacement.16
+             divbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  divbm 0x4444
+                 f6 36 44 44
+             2.  divbm [bx+si] 2
+                 f6 70 02
+             3.  divbm [bx+si] 2048
+                 f6 b0 00 08
+             4.  divbm [si]
+                 f6 34
+.RE
+
+.TP
+\fBdivbr\fR
+.RS 4
+Description  \fBDivide Bytes (Unsigned) - AL, Register\fR
+.RE
+.RS 4
+Syntax       divbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  divbr dl
+                 f6 f2
+.RE
+
+.TP
+\fBdivwm\fR
+.RS 4
+Description  \fBDivide Bytes (Unsigned) - AX, Memory\fR
+.RE
+.RS 4
+Syntax       divwm offset.16
+             divwm base displacement.8
+             divwm base displacement.16
+             divwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  divwm 0x4444
+                 f7 36 44 44
+             2.  divwm [bx+si] 2
+                 f7 70 02
+             3.  divwm [bx+si] 2048
+                 f7 b0 00 08
+             4.  divwm [si]
+                 f7 34
+.RE
+
+.TP
+\fBdivwr\fR
+.RS 4
+Description  \fBDivide Bytes (Unsigned) - AX, Register\fR
+.RE
+.RS 4
+Syntax       divwr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  divwr dx
+                 f7 f2
+.RE
+
+.TP
+\fBds\fR
+.RS 4
+Description  \fBDS Override Prefix\fR
+.RE
+.RS 4
+Syntax       ds instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  ds movwmr 0x4444 dx
+                 3e 8b 16 44 44 
+.RE
+
+.TP
+\fBes\fR
+.RS 4
+Description  \fBES Override Prefix\fR
+.RE
+.RS 4
+Syntax       es instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  es movwmr 0x4444 dx
+                 26 8b 16 44 44 
+.RE
+
+.TP
+\fBfwait\fR
+.RS 4
+Description  \fBWait for FPU\fR
+.RE
+.RS 4
+Syntax       fwait
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  fwait
+                 9b
+.RE
+
+.TP
+\fBhlt\fR
+.RS 4
+Description  \fBHalt CPU\fR
+.RE
+.RS 4
+Syntax       hlt
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  hlt
+                 f4
+.RE
+
+.TP
+\fBidivbm\fR
+.RS 4
+Description  \fBDivide Bytes (Signed) - AL, Memory\fR
+.RE
+.RS 4
+Syntax       idivbm offset.16
+             idivbm base displacement.8
+             idivbm base displacement.16
+             idivbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  idivbm 0x4444
+                 f6 3e 44 44
+             2.  idivbm [bx+si] 2
+                 f6 78 02
+             3.  idivbm [bx+si] 2048
+                 f6 b8 00 08
+             4.  idivbm [si]
+                 f6 3c
+.RE
+
+.TP
+\fBidivbr\fR
+.RS 4
+Description  \fBDivide Bytes (Signed) - AL, Register\fR
+.RE
+.RS 4
+Syntax       idivbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  idivbr dl
+                 f6 fa
+.RE
+
+.TP
+\fBidivwm\fR
+.RS 4
+Description  \fBDivide Bytes (Signed) - AX, Memory\fR
+.RE
+.RS 4
+Syntax       idivwm offset.16
+             idivwm base displacement.8
+             idivwm base displacement.16
+             idivwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  idivwm 0x4444
+                 f7 3e 44 44
+             2.  idivwm [bx+si] 2
+                 f7 78 02
+             3.  idivwm [bx+si] 2048
+                 f7 b8 00 08
+             4.  idivwm [si]
+                 f7 3c
+.RE
+
+.TP
+\fBidivwr\fR
+.RS 4
+Description  \fBDivide Bytes (Signed) - AX, Register\fR
+.RE
+.RS 4
+Syntax       idivwr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  idivwr dx
+                 f7 fa
+.RE
+
+.TP
+\fBimulbm\fR
+.RS 4
+Description  \fBMultiply Bytes (Signed) - AL, Memory\fR
+.RE
+.RS 4
+Syntax       imulbm offset.16
+             imulbm base displacement.8
+             imulbm base displacement.16
+             imulbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  imulbm 0x4444
+                 f6 2e 44 44
+             2.  imulbm [bx+si] 2
+                 f6 68 02
+             3.  imulbm [bx+si] 2048
+                 f6 a8 00 08
+             4.  imulbm [si]
+                 f6 2c
+.RE
+
+.TP
+\fBimulbr\fR
+.RS 4
+Description  \fBMultiply Bytes (Signed) - AL, Register\fR
+.RE
+.RS 4
+Syntax       imulbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  imulbr dl
+                 f6 ea
+.RE
+
+.TP
+\fBimulwm\fR
+.RS 4
+Description  \fBMultiply Words (Signed) - AX, Memory\fR
+.RE
+.RS 4
+Syntax       imulwm offset.16
+             imulwm base displacement.8
+             imulwm base displacement.16
+             imulwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  imulwm 0x4444
+                 f7 2e 44 44
+             2.  imulwm [bx+si] 2
+                 f7 68 02
+             3.  imulwm [bx+si] 2048
+                 f7 a8 00 08
+             4.  imulwm [si]
+                 f7 2c
+.RE
+
+.TP
+\fBimulwr\fR
+.RS 4
+Description  \fBMultiply Words (Signed) - AX, Register\fR
+.RE
+.RS 4
+Syntax       imulwr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  imulwr dx
+                 f7 ea
+.RE
+
+.TP
+\fBinb\fR
+.RS 4
+Description  \fBLoad AL from I/O port in DX\fR
+.RE
+.RS 4
+Syntax       inb
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  inb 
+                 ec
+.RE
+
+.TP
+\fBinbi\fR
+.RS 4
+Description  \fBLoad AL from I/O port\fR
+.RE
+.RS 4
+Syntax       inbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  inbi 0x66
+                 e4 66
+.RE
+
+.TP
+\fBincbm\fR
+.RS 4
+Description  \fBIncrement Memory Byte\fR
+.RE
+.RS 4
+Syntax       incbm offset.16 
+             incbm base displacement.8
+             incbm base displacement.16
+             incbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  incbm 0x4444
+                 fe 06 44 44
+             2.  incbm [bx+si] 2
+                 fe 40 02
+             3.  incbm [bx+si] 2048
+                 fe 80 00 08
+             4.  incbm [si]
+                 fe 04
+.RE
+
+.TP
+\fBincbr\fR
+.RS 4
+Description  \fBIncrement Byte Register\fR
+.RE
+.RS 4
+Syntax       incbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  incbr dl
+                 fe c2
+.RE
+
+.TP
+\fBincwm\fR
+.RS 4
+Description  \fBIncrement Memory Word\fR
+.RE
+.RS 4
+Syntax       incwm offset.16 
+             incwm base displacement.8
+             incwm base displacement.16
+             incwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  incwm 0x4444
+                 ff 06 44 44
+             2.  incwm [bx+si] 2
+                 ff 40 02
+             3.  incwm [bx+si] 2048
+                 ff 80 00 08
+             4.  incwm [si]
+                 ff 04
+.RE
+
+.TP
+\fBincwr\fR
+.RS 4
+Description  \fBIncrement Word Register\fR
+.RE
+.RS 4
+Syntax       incwr register.16
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  incwr dx
+                 42
+.RE
+
+.TP
+\fBint\fR
+.RS 4
+Description  \fBCall Interrupt/Exception Handler\fR
+.RE
+.RS 4
+Syntax       int immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  int 0x66
+                 cd 66
+.RE
+
+.TP
+\fBint3\fR
+.RS 4
+Description  \fBRaise Breakpoint Exception\fR
+.RE
+.RS 4
+Syntax       int3
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  int3
+                 cc
+.RE
+
+.TP
+\fBinto\fR
+.RS 4
+Description  \fBRaise Overflow Exception - if Overflow Flag is set\fR
+.RE
+.RS 4
+Syntax       into
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  into
+                 ce
+.RE
+
+.TP
+\fBinw\fR
+.RS 4
+Description  \fBLoad AX from I/O port in DX\fR
+.RE
+.RS 4
+Syntax       inw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  inw 
+                 ed
+.RE
+
+.TP
+\fBinwi\fR
+.RS 4
+Description  \fBLoad AX from I/O port\fR
+.RE
+.RS 4
+Syntax       inwi immediate.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  inwi 0x66
+                 e5 66
+.RE
+
+.TP
+\fBiret\fR
+.RS 4
+Description  \fBReturn from Interrupt\fR
+.RE
+.RS 4
+Syntax       iret
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  iret
+                 cf
+.RE
+
+.TP
+\fBja\fR
+.RS 4
+Description  \fBShort Jump - if Above\fR
+.RE
+.RS 4
+Syntax       ja displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  ja 0x66
+                 77 66
+.RE
+
+.TP
+\fBjae\fR
+.RS 4
+Description  \fBShort Jump - if Above or Equal\fR
+.RE
+.RS 4
+Syntax       jae displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jae 0x66
+                 73 66
+.RE
+
+.TP
+\fBjb\fR
+.RS 4
+Description  \fBShort Jump - if Below\fR
+.RE
+.RS 4
+Syntax       jb displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jb 0x66
+                 72 66
+.RE
+
+.TP
+\fBjbe\fR
+.RS 4
+Description  \fBShort Jump - if Below or Equal\fR
+.RE
+.RS 4
+Syntax       jbe displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jbe 0x66
+                 76 66
+.RE
+
+.TP
+\fBjc\fR
+.RS 4
+Description  \fBShort Jump - if Carry Flag is set\fR
+.RE
+.RS 4
+Syntax       jc displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jc 0x66
+                 72 66
+.RE
+
+.TP
+\fBjcxz\fR
+.RS 4
+Description  \fBShort Jump - if CX is 0\fR
+.RE
+.RS 4
+Syntax       jcxz displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jcxz 0x66
+                 e3 66
+.RE
+
+.TP
+\fBje\fR
+.RS 4
+Description  \fBShort Jump - if Equal\fR
+.RE
+.RS 4
+Syntax       je displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  je 0x66
+                 74 66
+.RE
+
+.TP
+\fBjg\fR
+.RS 4
+Description  \fBShort Jump - if Greater Than\fR
+.RE
+.RS 4
+Syntax       jg displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jg 0x66
+                 7f 66
+.RE
+
+.TP
+\fBjge\fR
+.RS 4
+Description  \fBShort Jump - if Greater Than or Equal\fR
+.RE
+.RS 4
+Syntax       jge displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jge 0x66
+                 7d 66
+.RE
+
+.TP
+\fBjl\fR
+.RS 4
+Description  \fBShort Jump - if Less Than\fR
+.RE
+.RS 4
+Syntax       jl displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jl 0x66
+                 7c 66
+.RE
+
+.TP
+\fBjle\fR
+.RS 4
+Description  \fBShort Jump - if Less Than or Equal\fR
+.RE
+.RS 4
+Syntax       jle displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jle 0x66
+                 7e 66
+.RE
+
+.TP
+\fBjmpf\fR
+.RS 4
+Description  \fBFar Jump\fR
+.RE
+.RS 4
+Syntax       jmpf segment.16 offset.16 
+.RE
+.RS 4
+Size         5
+.RE
+.RS 4
+Example      1.  jmpf 0x4444 0x0066
+                 ea 66 00 44 44
+.RE
+
+.TP
+\fBjmpfm\fR
+.RS 4
+Description  \fBIndirect Far Jump\fR
+.RE
+.RS 4
+Syntax       jmpfm offset.16 
+             jmpfm base displacement.8
+             jmpfm base displacement.16
+             jmpfm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  jmpfm 0x4444
+                 ff 2e 44 44
+             2.  jmpfm [bx+si] 2
+                 ff 68 02
+             3.  jmpfm [bx+si] 2048
+                 ff a8 00 08
+             4.  jmpfm [si]
+                 ff 2c
+.RE
+
+.TP
+\fBjmpn\fR
+.RS 4
+Description  \fBNear Jump\fR
+.RE
+.RS 4
+Syntax       jmpn displacement.8 
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  jmpn 0x4444
+                 e9 44 44
+.RE
+
+.TP
+\fBjmpnm\fR
+.RS 4
+Description  \fBIndirect Near Jump\fR
+.RE
+.RS 4
+Syntax       jmpnm offset.16 
+             jmpnm base displacement.8
+             jmpnm base displacement.16
+             jmpnm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  jmpnm 0x4444
+                 ff 26 44 44
+             2.  jmpnm [bx+si] 2
+                 ff 60 02 
+             3.  jmpnm [bx+si] 2048
+                 ff a0 00 08
+             4.  jmpnm [si]
+                 ff 24
+.RE
+
+.TP
+\fBjmpnr\fR
+.RS 4
+Description  \fBNear Jump via Word Register\fR
+.RE
+.RS 4
+Syntax       jmpnr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jmpnr dx
+                 ff e2 
+.RE
+
+.TP
+\fBjmps\fR
+.RS 4
+Description  \fBShort Jump\fR
+.RE
+.RS 4
+Syntax       jmps displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jmps 0x66
+                 eb 66
+.RE
+
+.TP
+\fBjna\fR
+.RS 4
+Description  \fBShort Jump - if Not Above\fR
+.RE
+.RS 4
+Syntax       jna displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jna 0x66
+                 76 66
+.RE
+
+.TP
+\fBjnae\fR
+.RS 4
+Description  \fBShort Jump - if Not Above or Equal\fR
+.RE
+.RS 4
+Syntax       jnae displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnae 0x66
+                 72 66
+.RE
+
+.TP
+\fBjnb\fR
+.RS 4
+Description  \fBShort Jump - if Not Below\fR
+.RE
+.RS 4
+Syntax       jnb displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnb 0x66
+                 73 66
+.RE
+
+.TP
+\fBjnbe\fR
+.RS 4
+Description  \fBShort Jump - if Not Below or Equal\fR
+.RE
+.RS 4
+Syntax       jnbe displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnbe 0x66
+                 77 66
+.RE
+
+.TP
+\fBjnc\fR
+.RS 4
+Description  \fBShort Jump - if Carry Flag is clear\fR
+.RE
+.RS 4
+Syntax       jnc displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnc 0x66
+                 73 66
+.RE
+
+.TP
+\fBjne\fR
+.RS 4
+Description  \fBShort Jump - if Not Equal\fR
+.RE
+.RS 4
+Syntax       jne displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jne 0x66
+                 75 66
+.RE
+
+.TP
+\fBjng\fR
+.RS 4
+Description  \fBShort Jump - if Not Greater Than\fR
+.RE
+.RS 4
+Syntax       jng displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jng 0x66
+                 7e 66
+.RE
+
+.TP
+\fBjnge\fR
+.RS 4
+Description  \fBShort Jump - if Not Greater Than or Equal\fR
+.RE
+.RS 4
+Syntax       jnge displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnge 0x66
+                 7c 66
+.RE
+
+.TP
+\fBjnl\fR
+.RS 4
+Description  \fBShort Jump - if Not Less Than\fR
+.RE
+.RS 4
+Syntax       jnl displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnl 0x66
+                 7d 66
+.RE
+
+.TP
+\fBjnle\fR
+.RS 4
+Description  \fBShort Jump - if Not Less Than or Equal\fR
+.RE
+.RS 4
+Syntax       jnle displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnle 0x66
+                 7f 66
+.RE
+
+.TP
+\fBjno\fR
+.RS 4
+Description  \fBShort Jump - if Overflow Flag is clear\fR
+.RE
+.RS 4
+Syntax       jno displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jno 0x66
+                 71 66
+.RE
+
+.TP
+\fBjnp\fR
+.RS 4
+Description  \fBShort Jump - if Parity Flag is clear\fR
+.RE
+.RS 4
+Syntax       jnp displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnp 0x66
+                 7b 66
+.RE
+
+.TP
+\fBjns\fR
+.RS 4
+Description  \fBShort Jump - if Sign Flag is clear\fR
+.RE
+.RS 4
+Syntax       jns displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jns 0x66
+                 79 66
+.RE
+
+.TP
+\fBjnz\fR
+.RS 4
+Description  \fBShort Jump - if Zero Flag is clear\fR
+.RE
+.RS 4
+Syntax       jnz displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jnz 0x66
+                 75 66
+.RE
+
+.TP
+\fBjo\fR
+.RS 4
+Description  \fBShort Jump - if Overflow Flag is set\fR
+.RE
+.RS 4
+Syntax       jo displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jo 0x66
+                 70 66
+.RE
+
+.TP
+\fBjp\fR
+.RS 4
+Description  \fBShort Jump - if Parity Flag is set\fR
+.RE
+.RS 4
+Syntax       jp displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jp 0x66
+                 7a 66
+.RE
+
+.TP
+\fBjpe\fR
+.RS 4
+Description  \fBShort Jump - if Parity is Even\fR
+.RE
+.RS 4
+Syntax       jpe displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jpe 0x66
+                 7a 66
+.RE
+
+.TP
+\fBjpo\fR
+.RS 4
+Description  \fBShort Jump - if Parity is Odd\fR
+.RE
+.RS 4
+Syntax       jpo displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jpo 0x66
+                 7b 66
+.RE
+
+.TP
+\fBjs\fR
+.RS 4
+Description  \fBShort Jump - if Sign Flag is set\fR
+.RE
+.RS 4
+Syntax       js displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  js 0x66
+                 78 66
+.RE
+
+.TP
+\fBjz\fR
+.RS 4
+Description  \fBShort Jump - if Zero Flag is set\fR
+.RE
+.RS 4
+Syntax       jz displacement.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  jz 0x66
+                 74 66
+.RE
+
+.TP
+\fBlahf\fR
+.RS 4
+Description  \fBLoad AH from Flags\fR
+.RE
+.RS 4
+Syntax       lahf
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  lahf
+                 9f
+.RE
+
+.TP
+\fBlds\fR
+.RS 4
+Description  \fBLoad DS:Register from Memory\fR
+.RE
+.RS 4
+Syntax       lds offset.16 register.16
+             lds base displacement.8 register.16
+             lds base displacement.16 register.16
+             lds base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  lds 0x4444 dx
+                 c5 16 44 44 
+             2.  lds [bx+si] 2 dx
+                 c5 50 02
+             3.  lds [bx+si] 2048 dx
+                 c5 90 00 08
+             4.  lds [si] dx
+                 c5 14
+.RE
+
+.TP
+\fBlea\fR
+.RS 4
+Description  \fBLoad Register with Effective Address\fR
+.RE
+.RS 4
+Syntax       lea offset.16 register.16
+             lea base displacement.8 register.16
+             lea base displacement.16 register.16
+             lea base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  lea 0x4444 dx
+                 8d 16 44 44 
+             2.  lea [bx+si] 2 dx
+                 8d 50 02
+             3.  lea [bx+si] 2048 dx
+                 8d 90 00 08
+             4.  lea [si] dx
+                 8d 14 
+.RE
+
+.TP
+\fBles\fR
+.RS 4
+Description  \fBLoad ES:Register from Memory\fR
+.RE
+.RS 4
+Syntax       les offset.16 register.16
+             les base displacement.8 register.16
+             les base displacement.16 register.16
+             les base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  les 0x4444 dx
+                 c4 16 44 44 
+             2.  les [bx+si] 2 dx
+                 c4 50 02
+             3.  les [bx+si] 2048 dx
+                 c4 90 00 08
+             4.  les [si] dx
+                 c4 14
+.RE
+
+.TP
+\fBloadb\fR
+.RS 4
+Description  \fBLoad AL from Memory\fR
+.RE
+.RS 4
+Syntax       loadb offset.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  loadb 0x4444
+                 a2 44 44
+.RE
+
+.TP
+\fBloadw\fR
+.RS 4
+Description  \fBLoad AX from Memory\fR
+.RE
+.RS 4
+Syntax       loadw offset.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  loadw 0x4444
+                 a3 44 44
+.RE
+
+.TP
+\fBlock\fR
+.RS 4
+Description  \fBAssert LOCK# Signal\fR
+.RE
+.RS 4
+Syntax       lock instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  lock addwmr 0x4444 dx
+                 f0 03 16 44 44
+.RE
+
+.TP
+\fBlodsb\fR
+.RS 4
+Description  \fBLoad AL from DS:SI\fR
+.RE
+.RS 4
+Syntax       lodsw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  lodsw
+                 ac
+.RE
+
+.TP
+\fBlodsw\fR
+.RS 4
+Description  \fBLoad AX from DS:SI\fR
+.RE
+.RS 4
+Syntax       lodsw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  lodsw
+                 ad
+.RE
+
+.TP
+\fBloop\fR
+.RS 4
+Description  \fBJump - if CX is 0\fR
+.RE
+.RS 4
+Syntax       loop displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  loop 0x66
+                 e2 66
+.RE
+
+.TP
+\fBloope\fR
+.RS 4
+Description  \fBJump - if CX is not 0 and Zero Flag is set\fR
+.RE
+.RS 4
+Syntax       loope displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  loope 0x66
+                 e1 66
+.RE
+
+.TP
+\fBloopne\fR
+.RS 4
+Description  \fBJump - if CX is not 0 and Zero Flag is clear\fR
+.RE
+.RS 4
+Syntax       loopne displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  loopne 0x66
+                 e0 66
+.RE
+
+.TP
+\fBloopnz\fR
+.RS 4
+Description  \fBJump - if CX is not 0 and Zero Flag is clear\fR
+.RE
+.RS 4
+Syntax       loopnz displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  loopnz 0x66
+                 e0 66
+.RE
+
+.TP
+\fBloopz\fR
+.RS 4
+Description  \fBJump - if CX is not 0 and Zero Flag is set\fR
+.RE
+.RS 4
+Syntax       loopz displacement.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  loopz 0x66
+                 e1 66
+.RE
+
+.TP
+\fBmovbim\fR
+.RS 4
+Description  \fBMove Byte - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       movbim immediate.8 offset.16 
+             movbim immediate.8 base displacement.8
+             movbim immediate.8 base displacement.16
+             movbim immediate.8 base 
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  movbim 0x66 0x4444
+                 c6 06 44 44 66
+             2.  movbim 0x66 [bx+si] 2
+                 c6 40 02 66 
+             3.  movbim 0x66 [bx+si] 2048
+                 c6 80 00 08 66 
+             4.  movbim 0x66 [si]
+                 c6 04 66 
+.RE
+
+.TP
+\fBmovbir\fR
+.RS 4
+Description  \fBMove Byte - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       movbir immediate.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  movbir 0x66 dl
+                 b2 66
+.RE
+
+.TP
+\fBmovbmr\fR
+.RS 4
+Description  \fBMove Byte - Memory, Register\fR
+.RE
+.RS 4
+Syntax       movbmr offset.16 register.8
+             movbmr base displacement.8 register.8
+             movbmr base displacement.16 register.8
+             movbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  movbmr 0x4444 dl
+                 8a 16 44 44
+             2.  movbmr [bx+si] 2 dl
+                 8a 50 02
+             3.  movbmr [bx+si] 2048 dl
+                 8a 90 00 08
+             4.  movbmr [si] 2 dl
+                 8a 14
+.RE
+
+.TP
+\fBmovbrm\fR
+.RS 4
+Description  \fBMove Byte - Register, Memory\fR
+.RE
+.RS 4
+Syntax       movbrm register.8 offset.16
+             movbrm register.8 base displacement.8
+             movbrm register.8 base displacement.16
+             movbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  movbrm dl 0x4444
+                 88 16 44 44
+             2.  movbrm dl [bx+si] 2
+                 88 50 02
+             3.  movbrm dl [bx+si] 2048
+                 88 90 00 08
+             4.  movbrm dl [si]
+                 88 14
+.RE
+
+.TP
+\fBmovbrr\fR
+.RS 4
+Description  \fBMove Byte - Register, Register\fR
+.RE
+.RS 4
+Syntax       movbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  movbrr dl al
+                 8a d0
+.RE
+
+.TP
+\fBmovsb\fR
+.RS 4
+Description  \fBMove String Byte - DS:SI, ES:DI\fR
+.RE
+.RS 4
+Syntax       movsb
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  movsb
+                 a4
+.RE
+
+.TP
+\fBmovsw\fR
+.RS 4
+Description  \fBMove String Word - DS:SI, ES:DI\fR
+.RE
+.RS 4
+Syntax       movsw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  movsw
+                 a5
+.RE
+
+.TP
+\fBmovwim\fR
+.RS 4
+Description  \fBMove Word - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       movwim immediate.16 offset.16
+             movwim immediate.16 base displacement.8
+             movwim immediate.16 base displacement.16
+             movwim immediate.16 base 
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  movwim 0x4444 0x6666
+                 c7 06 66 66 44 44
+             2.  movwim 0x4444 [bx+si] 2
+                 c7 40 02 44 44 
+             3.  movwim 0x4444 [bx+si] 2048
+                 c7 80 00 08 44 44 
+             4.  movwim 0x4444 [si]
+                 c7 04 44 44 
+.RE
+
+.TP
+\fBmovwir\fR
+.RS 4
+Description  \fBMove Word - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       movwir immediate.16 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  movwir 0x4444 dx
+                 ba 44 44 
+.RE
+
+.TP
+\fBmovwmr\fR
+.RS 4
+Description  \fBMove Word - Memory, Register\fR
+.RE
+.RS 4
+Syntax       movwmr offset.16 register.16
+             movwmr base displacement.8 register.16
+             movwmr base displacement.16 register.16
+             movwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  movwmr 0x4444 dx
+                 8b 16 44 44
+             2.  movwmr [bx+si] 2 dx
+                 8b 50 02
+             3.  movwmr [bx+si] 2048 dx
+                 8b 90 00 08
+             4.  movwmr [si] dx
+                 8b 14
+.RE
+
+.TP
+\fBmovwms\fR
+.RS 4
+Description  \fBMove Word - Memory, Segment Register\fR
+.RE
+.RS 4
+Syntax       movwms offset.16 register.16
+             movwms base displacement.8 register.16
+             movwms base displacement.16 register.16
+             movwms base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  movwms 0x4444 es
+                 8e 06 44 44
+             2.  movwms [bx+si] 2 es
+                 8e 40 02
+             3.  movwms [bx+si] 2048 es
+                 8e 80 00 08
+             4.  movwms [si] es
+                 8e 04
+.RE
+
+.TP
+\fBmovwrm\fR
+.RS 4
+Description  \fBMove Word - Register, Memory\fR
+.RE
+.RS 4
+Syntax       movwrm register.16 offset.16
+             movwrm register.16 base displacement.8
+             movwrm register.16 base displacement.16
+             movwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  movwrm dx 0x4444
+                 89 16 44 44
+             2.  movwrm dx [bx+si] 2
+                 89 50 02
+             3.  movwrm dx [bx+si] 2048
+                 89 90 00 08
+             4.  movwrm dx [si]
+                 89 14
+.RE
+
+.TP
+\fBmovwrr\fR
+.RS 4
+Description  \fBMove Word - Register, Register\fR
+.RE
+.RS 4
+Syntax       movwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  movwrr dx ax
+                 8b d0
+.RE
+
+.TP
+\fBmovwrs\fR
+.RS 4
+Description  \fBMove Word - Register, Segment Register\fR
+.RE
+.RS 4
+Syntax       movwrs register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  movwrs dx es
+                 8e c2
+.RE
+
+.TP
+\fBmovwsm\fR
+.RS 4
+Description  \fBMove Word - Segment Register, Memory\fR
+.RE
+.RS 4
+Syntax       movwsm register.16 offset.16
+             movwsm register.16 base displacement.8
+             movwsm register.16 base displacement.16
+             movwsm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  movwsm es 0x4444
+                 8c 06 44 44
+             2.  movwsm es [bx+si] 2
+                 8c 40 02
+             3.  movwsm es [bx+si] 2048
+                 8c 80 00 08
+             4.  movwsm es [si]
+                 8c 04
+.RE
+
+.TP
+\fBmovwsr\fR
+.RS 4
+Description  \fBMove Word - Segment Register, Register\fR
+.RE
+.RS 4
+Syntax       movwsr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  movwsr es dx
+                 8c c2
+.RE
+
+.TP
+\fBmulbm\fR
+.RS 4
+Description  \fBMultiply Bytes (Unsigned) - Memory, AL\fR
+.RE
+.RS 4
+Syntax       mulbm offset.16
+             mulbm base displacement.8
+             mulbm base displacement.16
+             mulbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  mulbm 0x4444
+                 f6 26 44 44
+             2.  mulbm [bx+si] 2
+                 f6 60 02
+             3.  mulbm [bx+si] 2048
+                 f6 a0 00 08
+             4.  mulbm [si]
+                 f6 24
+.RE
+
+.TP
+\fBmulbr\fR
+.RS 4
+Description  \fBMultiply Bytes (Unsigned) - AL, Register\fR
+.RE
+.RS 4
+Syntax       mulbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  mulbr dl
+                 f6 e2
+.RE
+
+.TP
+\fBmulwm\fR
+.RS 4
+Description  \fBMultiply Bytes (Unsigned) - AX, Memory\fR
+.RE
+.RS 4
+Syntax       mulwm offset.16
+             mulwm base displacement.8
+             mulwm base displacement.16
+             mulwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  mulwm 0x4444
+                 f7 26 44 44
+             2.  mulwm [bx+si] 2
+                 f7 60 02
+             3.  mulwm [bx+si] 2048
+                 f7 a0 00 08
+             4.  mulwm [si]
+                 f7 24
+.RE
+
+.TP
+\fBmulwr\fR
+.RS 4
+Description  \fBMultiply Words (Unsigned) - AL, Register\fR
+.RE
+.RS 4
+Syntax       mulwr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  mulwr dx
+                 f7 e2
+.RE
+
+.TP
+\fBnegbm\fR
+.RS 4
+Description  \fBNegate Memory Byte\fR
+.RE
+.RS 4
+Syntax       negbm offset.16
+             negbm base displacement.8
+             negbm base displacement.16
+             negbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  negbm 0x4444
+                 f6 1e 44 44
+             2.  negbm [bx+si] 2
+                 f6 58 02
+             3.  negbm [bx+si] 2048
+                 f6 98 00 08
+             4.  negbm [si]
+                 f6 1c
+.RE
+
+.TP
+\fBnegbr\fR
+.RS 4
+Description  \fBNegate Byte Register\fR
+.RE
+.RS 4
+Syntax       negbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  negbr dl
+                 f6 da
+.RE
+
+.TP
+\fBnegwm\fR
+.RS 4
+Description  \fBNegate Memory Word \fR
+.RE
+.RS 4
+Syntax       negwm offset.16
+             negwm base displacement.8
+             negwm base displacement.16
+             negwm base
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  negwm 0x4444
+                 f7 1e 44 44
+             2.  negwm [bx+si] 2
+                 f7 58 02
+             3.  negwm [bx+si] 2048
+                 f7 98 00 08
+             4.  negwm [si]
+                 f7 1c
+.RE
+
+.TP
+\fBnegwr\fR
+.RS 4
+Description  \fBNegate Word Register\fR
+.RE
+.RS 4
+Syntax       negwr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  negwr dx
+                 f7 da
+.RE
+
+.TP
+\fBnop\fR
+.RS 4
+Description  \fBNo Operation.\fR
+.RE
+.RS 4
+Syntax       nop
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  nop
+                 90
+.RE
+
+.TP
+\fBnotbm\fR
+.RS 4
+Description  \fBInvert Memory Byte\fR
+.RE
+.RS 4
+Syntax       notbm offset.16
+             notbm base displacement.8
+             notbm base displacement.16
+             notbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  notbm 0x4444
+                 f6 16 44 44
+             2.  notbm [bx+si] 2
+                 f6 50 02
+             3.  notbm [bx+si] 2048
+                 f6 90 00 08
+             4.  notbm [si]
+                 f6 14
+.RE
+
+.TP
+\fBnotbr\fR
+.RS 4
+Description  \fBInvert Byte Register\fR
+.RE
+.RS 4
+Syntax       notbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  notbr dl
+                 f6 d2
+.RE
+
+.TP
+\fBnotwm\fR
+.RS 4
+Description  \fBInvert Memory Word\fR
+.RE
+.RS 4
+Syntax       notwm offset.16
+             notwm base displacement.8
+             notwm base displacement.16
+             notwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  notwm 0x4444
+                 f7 16 44 44
+             2.  notwm [bx+si] 2
+                 f7 50 02
+             3.  notwm [bx+si] 2048
+                 f7 90 00 08
+             4.  notwm [si]
+                 f7 14
+.RE
+
+.TP
+\fBnotwr\fR
+.RS 4
+Description  \fBInvert Word Register\fR
+.RE
+.RS 4
+Syntax       notwr register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  notwr dx
+                 f7 d2
+.RE
+
+.TP
+\fBorb8m\fR
+.RS 4
+Description  \fBInclusive OR Bytes - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       orb8m immediate.8 offset.16
+             orb8m immediate.8 base displacement.8
+             orb8m immediate.8 base displacement.16
+             orb8m immediate.8 base
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  orb8m 0x66 0x4444
+                 82 0e 44 44 66
+             2.  orb8m 0x66 [bx+si] 2
+                 82 48 02 66
+             3.  orb8m 0x66 [bx+si] 2048
+                 82 88 00 08 66
+             4.  orb8m 0x66 [si]
+                 82 0c 66
+.RE
+
+.TP
+\fBorb8r\fR
+.RS 4
+Description  \fBInclusive OR Bytes - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       orb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  orb8r 0x66 dl
+                 82 ca 66 
+.RE
+
+.TP
+\fBorbi\fR
+.RS 4
+Description  \fBInclusive OR Bytes - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       orbi immediate.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  orbi 0x66
+                 0c 66
+.RE
+
+.TP
+\fBorbim\fR
+.RS 4
+Description  \fBInclusive OR Bytes - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       orbim immediate.8 offset.16
+             orbim immediate.8 base displacement.8
+             orbim immediate.8 base displacement.16
+             orbim immediate.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  orbim 0x66 0x4444
+                 80 0e 44 44 66 
+             2.  orbim 0x66 [bx+si] 2
+                 80 48 02 66 
+             3.  orbim 0x66 [bx+si] 2048
+                 80 88 00 08 66 
+             4.  orbim 0x66 [si]
+                 80 0c 66
+.RE
+
+.TP
+\fBorbir\fR
+.RS 4
+Description  \fBInclusive OR Bytes - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       orbir immediate.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  orbir 0x66 dl
+                 80 ca 66
+.RE
+
+.TP
+\fBorbmr\fR
+.RS 4
+Description  \fBInclusive OR Bytes - Memory, Register\fR
+.RE
+.RS 4
+Syntax       orbmr offset.16 register.8
+             orbmr base displacement.8 register.8
+             orbmr base displacement.16 register.8
+             orbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  orbmr 0x4444 dl
+                 0a 16 44 44
+             2.  orbmr [bx+si] 2 dl
+                 0a 50 02 
+             3.  orbmr [bx+si] 2048 dl
+                 0a 90 00 08 
+             4.  orbmr [si] dl
+                 0a 14 
+.RE
+
+.TP
+\fBorbrm\fR
+.RS 4
+Description  \fBInclusive OR Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       orbrm register.8 offset.16
+             orbrm register.8 base displacement.8
+             orbrm register.8 base displacement.16
+             orbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  orbrm dl 0x4444
+                 08 16 44 44
+             2.  orbrm dl [bx+si] 2
+                 08 50 02
+             3.  orbrm dl [bx+si] 2048
+                 08 90 00 08
+             4.  orbrm dl [si]
+                 08 14
+.RE
+
+.TP
+\fBorbrr\fR
+.RS 4
+Description  \fBInclusive OR Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       orbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  orbrr dl al
+                 08 d0 
+.RE
+
+.TP
+\fBorw8m\fR
+.RS 4
+Description  \fBInclusive OR Words - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       orw8m immediate.8 offset.16
+             orw8m immediate.8 base displacement.8
+             orw8m immediate.8 base displacement.16
+             orw8m immediate.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  orw8m 0x66 0x4444
+                 83 0e 44 44 66
+             2.  orw8m 0x66 [bx+si] 2
+                 83 48 02 66
+             3.  orw8m 0x66 [bx+si] 2048
+                 83 88 00 08 66
+             4.  orw8m 0x66 [si]
+                 83 0c 66
+.RE
+
+.TP
+\fBorw8r\fR
+.RS 4
+Description  \fBInclusive OR Words - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       orw8r immediate.8 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  orw8r 0x66 dx
+                 83 ca 66 
+.RE
+
+.TP
+\fBorwi\fR
+.RS 4
+Description  \fBInclusive OR Words - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       orwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  orwi 0x6666
+                 0d 66 66
+.RE
+
+.TP
+\fBorwim\fR
+.RS 4
+Description  \fBInclusive OR Words - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       orwim immediate.16 offset.16
+             orwim immediate.16 base displacement.8
+             orwim immediate.16 base displacement.8
+             orwim immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  orwim 0x6666 0x4444
+                 81 0e 44 44 66 66
+             2.  orwim 0x6666 [bx+si] 2
+                 81 48 02 66 66
+             3.  orwim 0x6666 [bx+si] 2048
+                 81 88 00 08 66 66
+             4.  orwim 0x6666 [si]
+                 81 0c 66 66
+.RE
+
+.TP
+\fBorwir\fR
+.RS 4
+Description  \fBInclusive OR Words - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       orwir immediate.16 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  orwir 0x6666 dx
+                 81 ca 66 66
+.RE
+
+.TP
+\fBorwmr\fR
+.RS 4
+Description  \fBInclusive OR Words - Memory, Register\fR
+.RE
+.RS 4
+Syntax       orwmr offset.16 register.16
+             orwmr base displacement.8 register.16
+             orwmr base displacement.16 register.16
+             orwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  orwmr 0x4444 dx
+                 0b 16 44 44
+             2.  orwmr [bx+si] 2 dx
+                 0b 50 02 
+             3.  orwmr [bx+si] 2048 dx
+                 0b 90 00 08 
+             4.  orwmr [si] dx
+                 0b 14 
+.RE
+
+.TP
+\fBorwrm\fR
+.RS 4
+Description  \fBInclusive OR Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       orwrm register.16 offset.16
+             orwrm register.16 base displacement.8
+             orwrm register.16 base displacement.16
+             orwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  orwrm dx 0x4444
+                 09 16 44 44
+             2.  orwrm dx [bx+si] 2
+                 09 50 02
+             3.  orwrm dx [bx+si] 2048
+                 09 90 00 08
+             4.  orwrm dx [si]
+                 09 14
+.RE
+
+.TP
+\fBorwrr\fR
+.RS 4
+Description  \fBInclusive OR Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       orwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  orwrr dx ax
+                 09 d0 
+.RE
+
+.TP
+\fBoutb\fR
+.RS 4
+Description  \fBWrite AL to I/O port in DX\fR
+.RE
+.RS 4
+Syntax       outb
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  outb 
+                 ee
+.RE
+
+.TP
+\fBoutbi\fR
+.RS 4
+Description  \fBWrite AL to I/O port\fR
+.RE
+.RS 4
+Syntax       outbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  outbi 0x66
+                 e6 66
+.RE
+
+.TP
+\fBoutw\fR
+.RS 4
+Description  \fBWrite AX to I/O port in DX\fR
+.RE
+.RS 4
+Syntax       outw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  outw 
+                 ef
+.RE
+
+.TP
+\fBoutwi\fR
+.RS 4
+Description  \fBWrite AX to I/O port\fR
+.RE
+.RS 4
+Syntax       outwi immediate.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  outwi 0x66
+                 e7 66
+.RE
+
+.TP
+\fBpopf\fR
+.RS 4
+Description  \fBLoad FLAGS from Stack\fR
+.RE
+.RS 4
+Syntax       popf
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  popf
+                 9d
+.RE
+
+.TP
+\fBpopwm\fR
+.RS 4
+Description  \fBLoad Memory Word from Stack\fR
+.RE
+.RS 4
+Syntax       popwm offset.16
+             popwm base displacement.8
+             popwm base displacement.16
+             popwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  popwm 0x4444
+                 8f 06 44 44
+             2.  popwm [bx+si] 2
+                 8f 40 02
+             3.  popwm [bx+si] 2048
+                 8f 80 00 08
+             4.  popwm [si]
+                 8f 04
+.RE
+
+.TP
+\fBpopwr\fR
+.RS 4
+Description  \fBLoad General Word Register from Stack\fR
+.RE
+.RS 4
+Syntax       popwr register.16
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  popwr dx 
+                 5a
+.RE
+
+.TP
+\fBpopws\fR
+.RS 4
+Description  \fBLoad Segment Register from Stack\fR
+.RE
+.RS 4
+Syntax       popws register.16
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  popws ds
+                 1f
+.RE
+
+.TP
+\fBpushf\fR
+.RS 4
+Description  \fBStore FLAGS on Stack\fR
+.RE
+.RS 4
+Syntax       pushf
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  pushf
+                 9c
+.RE
+
+.TP
+\fBpushwm\fR
+.RS 4
+Description  \fBStore Memory Word on Stack\fR
+.RE
+.RS 4
+Syntax       pushwm offset.16
+             pushwm base displacement.8
+             pushwm base displacement.16
+             pushwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  pushwm 0x4444
+                 ff 36 44 44
+             2.  pushwm [bx+si] 2
+                 ff 70 02
+             3.  pushwm [bx+si] 2048
+                 ff b0 00 08
+             4.  pushwm [si]
+                 ff 34
+.RE
+
+.TP
+\fBpushwr\fR
+.RS 4
+Description  \fBStore General Word Register on Stack\fR
+.RE
+.RS 4
+Syntax       pushwr register.16
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  pushwr dx 
+                 52
+.RE
+
+.TP
+\fBpushws\fR
+.RS 4
+Description  \fBStore Segment Register on Stack\fR
+.RE
+.RS 4
+Syntax       pushws register.16
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  pushws ds
+                 1e
+.RE
+
+.TP
+\fBrcl1bm\fR
+.RS 4
+Description  \fBRotate Memory Byte Left through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcl1bm offset.16 
+             rcl1bm base displacement.8
+             rcl1bm base displacement.16
+             rcl1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rcl1bm 0x4444
+                 d0 16 44 44
+             2.  rcl1bm [bx+si] 2
+                 d0 50 02
+             3.  rcl1bm [bx+si] 2048
+                 d0 90 00 08
+             4.  rcl1bm [si]
+                 d0 14
+.RE
+
+.TP
+\fBrcl1br\fR
+.RS 4
+Description  \fBRotate Byte Register Left through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcl1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rcl1br dl
+                 d0 d2
+.RE
+
+.TP
+\fBrcl1wm\fR
+.RS 4
+Description  \fBRotate Memory Word Left through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcl1wm offset.16 
+             rcl1wm base displacement.8
+             rcl1wm base displacement.16
+             rcl1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rcl1wm 0x4444
+                 d1 16 44 44
+             2.  rcl1wm [bx+si] 2
+                 d1 50 02
+             3.  rcl1wm [bx+si] 2048
+                 d1 90 00 08
+             4.  rcl1wm [si]
+                 d1 14
+.RE
+
+.TP
+\fBrcl1wr\fR
+.RS 4
+Description  \fBRotate Word Register Left through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcl1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rcl1wr dx
+                 d1 d2
+.RE
+
+.TP
+\fBrclbm\fR
+.RS 4
+Description  \fBRotate Memory Byte Left through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rclbm offset.16 
+             rclbm base displacement.8
+             rclbm base displacement.16
+             rclbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rclbm 0x4444
+                 d2 16 44 44
+             2.  rclbm [bx+si] 2
+                 d2 50 02
+             3.  rclbm [bx+si] 2048
+                 d2 90 00 08
+             4.  rclbm [si]
+                 d2 14
+.RE
+
+.TP
+\fBrclbr\fR
+.RS 4
+Description  \fBRotate Byte Register Left through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rclbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rclbr dl
+                 d2 d2
+.RE
+
+.TP
+\fBrclwm\fR
+.RS 4
+Description  \fBRotate Memory Word Left through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rclwm offset.16 
+             rclwm base displacement.8
+             rclwm base displacement.16
+             rclwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rclwm 0x4444
+                 d3 16 44 44
+             2.  rclwm [bx+si] 2
+                 d3 50 02
+             3.  rclwm [bx+si] 2048
+                 d3 90 00 08
+             4.  rclwm [si]
+                 d3 14
+.RE
+
+.TP
+\fBrclwr\fR
+.RS 4
+Description  \fBRotate Word Register Left through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rclwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rclwr dx
+                 d3 d2
+.RE
+
+.TP
+\fBrcr1bm\fR
+.RS 4
+Description  \fBRotate Memory Byte Right through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcr1bm offset.16 
+             rcr1bm base displacement.8
+             rcr1bm base displacement.16
+             rcr1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rcr1bm 0x4444
+                 d0 1e 44 44
+             2.  rcr1bm [bx+si] 2
+                 d0 58 02
+             3.  rcr1bm [bx+si] 2048
+                 d0 98 00 08
+             4.  rcr1bm [si]
+                 d0 1c
+.RE
+
+.TP
+\fBrcr1br\fR
+.RS 4
+Description  \fBRotate Byte Register Right through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcr1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rcr1br dl
+                 d0 da
+.RE
+
+.TP
+\fBrcr1wm\fR
+.RS 4
+Description  \fBRotate Memory Word Right through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcr1wm offset.16 
+             rcr1wm base displacement.8
+             rcr1wm base displacement.16
+             rcr1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rcr1wm 0x4444
+                 d1 1e 44 44
+             2.  rcr1wm [bx+si] 2
+                 d1 58 02
+             3.  rcr1wm [bx+si] 2048
+                 d1 98 00 08
+             4.  rcr1wm [si]
+                 d1 1c
+.RE
+
+.TP
+\fBrcr1wr\fR
+.RS 4
+Description  \fBRotate Word Register Right through Carry by 1\fR
+.RE
+.RS 4
+Syntax       rcr1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rcr1wr dx
+                 d1 da
+.RE
+
+.TP
+\fBrcrbm\fR
+.RS 4
+Description  \fBRotate Memory Byte Right through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rcrbm offset.16 
+             rcrbm base displacement.8
+             rcrbm base displacement.16
+             rcrbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rcrbm 0x4444
+                 d2 1e 44 44
+             2.  rcrbm [bx+si] 2
+                 d2 58 02
+             3.  rcrbm [bx+si] 2048
+                 d2 98 00 08
+             4.  rcrbm [si]
+                 d2 1c
+.RE
+
+.TP
+\fBrcrbr\fR
+.RS 4
+Description  \fBRotate Byte Register Right through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rcrbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rcrbr dl
+                 d2 da
+.RE
+
+.TP
+\fBrcrwm\fR
+.RS 4
+Description  \fBRotate Memory Word Right through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rcrwm offset.16 
+             rcrwm base displacement.8
+             rcrwm base displacement.16
+             rcrwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rcrwm 0x4444
+                 d3 1e 44 44
+             2.  rcrwm [bx+si] 2
+                 d3 58 02
+             3.  rcrwm [bx+si] 2048
+                 d3 98 00 08
+             4.  rcrwm [si]
+                 d3 1c
+.RE
+
+.TP
+\fBrcrwr\fR
+.RS 4
+Description  \fBRotate Word Register Right through Carry by CL\fR
+.RE
+.RS 4
+Syntax       rcrwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rcrwr dx
+                 d3 da
+.RE
+
+.TP
+\fBrep\fR
+.RS 4
+Description  \fBRepeat while CX is not 0\fR
+.RE
+.RS 4
+Syntax       rep instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  rep lodsb
+                 f3 ac
+.RE
+
+.TP
+\fBrepe\fR
+.RS 4
+Description  \fBRepeat while CX is not 0 and Zero Flag is set\fR
+.RE
+.RS 4
+Syntax       repe instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  repe lodsb
+                 f3 ac
+.RE
+
+.TP
+\fBrepne\fR
+.RS 4
+Description  \fBRepeat while CX is not 0 and Zero Flag is clear\fR
+.RE
+.RS 4
+Syntax       repne instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  repne lodsb
+                 f2 ac
+.RE
+
+.TP
+\fBrepnz\fR
+.RS 4
+Description  \fBRepeat while CX is not 0 and Zero Flag is clear\fR
+.RE
+.RS 4
+Syntax       repnz instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  repnz lodsb 
+                 f2 ac
+.RE
+
+.TP
+\fBrepz\fR
+.RS 4
+Description  \fBRepeat while CX is not 0 and Zero Flag is set\fR
+.RE
+.RS 4
+Syntax       repe instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  repe lodsb
+                 f3 ac
+.RE
+
+.TP
+\fBretf\fR
+.RS 4
+Description  \fBFar Return\fR
+.RE
+.RS 4
+Syntax       retf
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  retf
+                 cb
+.RE
+
+.TP
+\fBretfi\fR
+.RS 4
+Description  \fBFar Return\fR
+.RE
+.RS 4
+Syntax       retfi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  retf 0x4444
+                 ca 44 44
+.RE
+
+.TP
+\fBretn\fR
+.RS 4
+Description  \fBNear Return\fR
+.RE
+.RS 4
+Syntax       retn
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  retn
+                 c3
+.RE
+
+.TP
+\fBretni\fR
+.RS 4
+Description  \fBNear Return\fR
+.RE
+.RS 4
+Syntax       retni immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  retn 0x4444
+                 c2 44 44
+.RE
+
+.TP
+\fBrol1bm\fR
+.RS 4
+Description  \fBRotate Memory Byte Right by 1\fR
+.RE
+.RS 4
+Syntax       rol1bm offset.16 
+             rol1bm base displacement.8
+             rol1bm base displacement.16
+             rol1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rol1bm 0x4444
+                 d0 06 44 44
+             2.  rol1bm [bx+si] 2
+                 d0 40 02
+             3.  rol1bm [bx+si] 2048
+                 d0 80 00 08
+             4.  rol1bm [si]
+                 d0 04
+.RE
+
+.TP
+\fBrol1br\fR
+.RS 4
+Description  \fBRotate Byte Register Right by 1\fR
+.RE
+.RS 4
+Syntax       rol1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rol1br dl
+                 d0 c2
+.RE
+
+.TP
+\fBrol1wm\fR
+.RS 4
+Description  \fBRotate Memory Word Right by 1\fR
+.RE
+.RS 4
+Syntax       rol1wm offset.16 
+             rol1wm base displacement.8
+             rol1wm base displacement.16
+             rol1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rol1wm 0x4444
+                 d1 06 44 44
+             2.  rol1wm [bx+si] 2
+                 d1 40 02
+             3.  rol1wm [bx+si] 2048
+                 d1 80 00 08
+             4.  rol1wm [si]
+                 d1 04
+.RE
+
+.TP
+\fBrol1wr\fR
+.RS 4
+Description  \fBRotate Word Register Right by 1\fR
+.RE
+.RS 4
+Syntax       rol1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rol1wr dx
+                 d1 c2
+.RE
+
+.TP
+\fBrolbm\fR
+.RS 4
+Description  \fBRotate Memory Byte Left by CL\fR
+.RE
+.RS 4
+Syntax       rolbm offset.16 
+             rolbm base displacement.8
+             rolbm base displacement.16
+             rolbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rolbm 0x4444
+                 d2 06 44 44
+             2.  rolbm [bx+si] 2
+                 d2 40 02
+             3.  rolbm [bx+si] 2048
+                 d2 80 00 08
+             4.  rolbm [si]
+                 d2 04
+.RE
+
+.TP
+\fBrolbr\fR
+.RS 4
+Description  \fBRotate Byte Register Left by CL\fR
+.RE
+.RS 4
+Syntax       rolbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rolbr dl
+                 d2 c2
+.RE
+
+.TP
+\fBrolwm\fR
+.RS 4
+Description  \fBRotate Memory Word Left by CL\fR
+.RE
+.RS 4
+Syntax       rolwm offset.16 
+             rolwm base displacement.8
+             rolwm base displacement.16
+             rolwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rolwm 0x4444
+                 d3 06 44 44
+             2.  rolwm [bx+si] 2
+                 d3 40 02
+             3.  rolwm [bx+si] 2048
+                 d3 80 00 08
+             4.  rolwm [si]
+                 d3 04
+.RE
+
+.TP
+\fBrolwr\fR
+.RS 4
+Description  \fBRotate Word Register Left by CL\fR
+.RE
+.RS 4
+Syntax       rolwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rolwr dx
+                 d3 c2
+.RE
+
+.TP
+\fBror1bm\fR
+.RS 4
+Description  \fBRotate Memory Byte Right by 1\fR
+.RE
+.RS 4
+Syntax       ror1bm offset.16 
+             ror1bm base displacement.8
+             ror1bm base displacement.16
+             ror1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  ror1bm 0x4444
+                 d2 0e 44 44
+             2.  ror1bm [bx+si] 2
+                 d2 48 02
+             3.  ror1bm [bx+si] 2048
+                 d2 88 00 08
+             4.  ror1bm [si]
+                 d2 0c
+.RE
+
+.TP
+\fBror1br\fR
+.RS 4
+Description  \fBRotate Byte Register Right by 1\fR
+.RE
+.RS 4
+Syntax       ror1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  ror1br dl
+                 d2 ca
+.RE
+
+.TP
+\fBror1wm\fR
+.RS 4
+Description  \fBRotate Memory Word Right by 1\fR
+.RE
+.RS 4
+Syntax       ror1wm offset.16 
+             ror1wm base displacement.8
+             ror1wm base displacement.16
+             ror1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  ror1wm 0x4444
+                 d3 0e 44 44
+             2.  ror1wm [bx+si] 2
+                 d3 48 02
+             3.  ror1wm [bx+si] 2048
+                 d3 88 00 08
+             4.  ror1wm [si]
+                 d3 0c
+.RE
+
+.TP
+\fBror1wr\fR
+.RS 4
+Description  \fBRotate Word Register Right by 1\fR
+.RE
+.RS 4
+Syntax       ror1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  ror1wr dx
+                 d3 ca
+.RE
+
+.TP
+\fBrorbm\fR
+.RS 4
+Description  \fBRotate Memory Byte Right by CL\fR
+.RE
+.RS 4
+Syntax       rorbm offset.16 
+             rorbm base displacement.8
+             rorbm base displacement.16
+             rorbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rorbm 0x4444
+                 d2 0e 44 44
+             2.  rorbm [bx+si] 2
+                 d2 48 02
+             3.  rorbm [bx+si] 2048
+                 d2 88 00 08
+             4.  rorbm [si]
+                 d2 0c
+.RE
+
+.TP
+\fBrorbr\fR
+.RS 4
+Description  \fBRotate Byte Register Right by CL\fR
+.RE
+.RS 4
+Syntax       rorbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rorbr dl
+                 d2 ca
+.RE
+
+.TP
+\fBrorwm\fR
+.RS 4
+Description  \fBRotate Memory Word Right by CL\fR
+.RE
+.RS 4
+Syntax       rorwm offset.16 
+             rorwm base displacement.8
+             rorwm base displacement.16
+             rorwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  rorwm 0x4444
+                 d3 0e 44 44
+             2.  rorwm [bx+si] 2
+                 d3 48 02
+             3.  rorwm [bx+si] 2048
+                 d3 88 00 08
+             4.  rorwm [si]
+                 d3 0c
+.RE
+
+.TP
+\fBrorwr\fR
+.RS 4
+Description  \fBRotate Word Register Right by CL\fR
+.RE
+.RS 4
+Syntax       rorwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  rorwr dx
+                 d3 ca
+.RE
+
+.TP
+\fBsahf\fR
+.RS 4
+Description  \fBStore AH in Flags\fR
+.RE
+.RS 4
+Syntax       sahf
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  sahf
+                 9e
+.RE
+
+.TP
+\fBsal1bm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Byte Left by 1\fR
+.RE
+.RS 4
+Syntax       sal1bm offset.16 
+             sal1bm base displacement.8
+             sal1bm base displacement.16
+             sal1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sal1bm 0x4444
+                 d0 36 44 44
+             2.  sal1bm [bx+si] 2
+                 d0 70 02
+             3.  sal1bm [bx+si] 2048
+                 d0 b0 00 08
+             4.  sal1bm [si]
+                 d0 34
+.RE
+
+.TP
+\fBsal1br\fR
+.RS 4
+Description  \fBArithmetic Shift Byte Register Left by 1\fR
+.RE
+.RS 4
+Syntax       sal1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sal1br dl
+                 d0 f2
+.RE
+
+.TP
+\fBsal1wm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Word Left by 1\fR
+.RE
+.RS 4
+Syntax       sal1wm offset.16 
+             sal1wm base displacement.8
+             sal1wm base displacement.16
+             sal1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sal1wm 0x4444
+                 d1 36 44 44
+             2.  sal1wm [bx+si] 2
+                 d1 70 02
+             3.  sal1wm [bx+si] 2048
+                 d1 b0 00 08
+             4.  sal1wm [si]
+                 d1 34
+.RE
+
+.TP
+\fBsal1wr\fR
+.RS 4
+Description  \fBArithmetic Shift Word Register Left by 1\fR
+.RE
+.RS 4
+Syntax       sal1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sal1wr dx
+                 d1 f2
+.RE
+
+.TP
+\fBsalbm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Byte Left by CL\fR
+.RE
+.RS 4
+Syntax       salbm offset.16 
+             salbm base displacement.8
+             salbm base displacement.16
+             salbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  salbm 0x4444
+                 d2 36 44 44
+             2.  salbm [bx+si] 2
+                 d2 70 02
+             3.  salbm [bx+si] 2048
+                 d2 b0 00 08
+             4.  salbm [si]
+                 d2 34
+.RE
+
+.TP
+\fBsalbr\fR
+.RS 4
+Description  \fBArithmetic Shift Byte Register Left by CL\fR
+.RE
+.RS 4
+Syntax       salbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  salbr dl
+                 d2 f2
+.RE
+
+.TP
+\fBsalwm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Word Left by CL\fR
+.RE
+.RS 4
+Syntax       salwm offset.16 
+             salwm base displacement.8
+             salwm base displacement.16
+             salwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  salwm 0x4444
+                 d3 36 44 44
+             2.  salwm [bx+si] 2
+                 d3 70 02
+             3.  salwm [bx+si] 2048
+                 d3 b0 00 08
+             4.  salwm [si]
+                 d3 34
+.RE
+
+.TP
+\fBsalwr\fR
+.RS 4
+Description  \fBArithmetic Shift Word Register Left by CL\fR
+.RE
+.RS 4
+Syntax       salwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  salwr dx
+                 d3 f2
+.RE
+
+.TP
+\fBsar1bm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Byte Right by 1\fR
+.RE
+.RS 4
+Syntax       sar1bm offset.16 
+             sar1bm base displacement.8
+             sar1bm base displacement.16
+             sar1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sar1bm 0x4444
+                 d0 3e 44 44
+             2.  sar1bm [bx+si] 2
+                 d0 78 02
+             3.  sar1bm [bx+si] 2048
+                 d0 b8 00 08
+             4.  sar1bm [si]
+                 d0 3c
+.RE
+
+.TP
+\fBsar1br\fR
+.RS 4
+Description  \fBArithmetic Shift Byte Register Right by 1\fR
+.RE
+.RS 4
+Syntax       sar1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sar1br dl
+                 d0 fa
+.RE
+
+.TP
+\fBsar1wm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Word Right by 1\fR
+.RE
+.RS 4
+Syntax       sar1wm offset.16 
+             sar1wm base displacement.8
+             sar1wm base displacement.16
+             sar1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sar1wm 0x4444
+                 d1 3e 44 44
+             2.  sar1wm [bx+si] 2
+                 d1 78 02
+             3.  sar1wm [bx+si] 2048
+                 d1 b8 00 08
+             4.  sar1wm [si]
+                 d1 3c
+.RE
+
+.TP
+\fBsar1wr\fR
+.RS 4
+Description  \fBArithmetic Shift Word Register Right by 1\fR
+.RE
+.RS 4
+Syntax       sar1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sar1wr dx
+                 d1 fa
+.RE
+
+.TP
+\fBsarbm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Byte Right by CL\fR
+.RE
+.RS 4
+Syntax       sarbm offset.16 
+             sarbm base displacement.8
+             sarbm base displacement.16
+             sarbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sarbm 0x4444
+                 d2 3e 44 44
+             2.  sarbm [bx+si] 2
+                 d2 78 02
+             3.  sarbm [bx+si] 2048
+                 d2 b8 00 08
+             4.  sarbm [si]
+                 d2 3c
+.RE
+
+.TP
+\fBsarbr\fR
+.RS 4
+Description  \fBArithmetic Shift Byte Register Right by CL\fR
+.RE
+.RS 4
+Syntax       sarbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sarbr dl
+                 d2 fa
+.RE
+
+.TP
+\fBsarwm\fR
+.RS 4
+Description  \fBArithmetic Shift Memory Word Right by CL\fR
+.RE
+.RS 4
+Syntax       sarwm offset.16 
+             sarwm base displacement.8
+             sarwm base displacement.16
+             sarwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sarwm 0x4444
+                 d3 3e 44 44
+             2.  sarwm [bx+si] 2
+                 d3 78 02
+             3.  sarwm [bx+si] 2048
+                 d3 b8 00 08
+             4.  sarwm [si]
+                 d3 3c
+.RE
+
+.TP
+\fBsarwr\fR
+.RS 4
+Description  \fBArithmetic Shift Word Register Right by CL\fR
+.RE
+.RS 4
+Syntax       sarwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sarwr dx
+                 d3 fa
+.RE
+
+.TP
+\fBsbbb8m\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       sbbb8m immediate.8 offset.16
+             sbbb8m immediate.8 base displacement.8
+             sbbb8m immediate.8 base displacement.16
+             sbbb8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  sbbb8m 0x66 0x4444
+                 82 1e 44 44 66 
+             2.  sbbb8m 0x66 [bx+si] 2
+                 82 58 02 66 
+             3.  sbbb8m 0x66 [bx+si] 2048
+                 82 98 00 08 66 
+             4.  sbbb8m 0x66 [si]
+                 82 1c 66 
+.RE
+
+.TP
+\fBsbbb8r\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       sbbb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  sbbb8r 0x66 dl
+                 82 da 66
+.RE
+
+.TP
+\fBsbbbi\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       sbbbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sbbbi 0x66
+                 1c 66
+.RE
+
+.TP
+\fBsbbbim\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       sbbbim immediate.8 offset.16
+             sbbbim immediate.8 base displacement.8
+             sbbbim immediate.8 base displacement.16
+             sbbbim immediate.8 base 
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  sbbbim 0x66 0x4444
+                 80 1e 44 44 66
+             2.  sbbbim 0x66 [bx+si] 2
+                 80 58 02 66
+             3.  sbbbim 0x66 [bx+si] 2048
+                 80 98 00 08 66
+             4.  sbbbim 0x66 [si]
+                 80 1c 66
+.RE
+
+.TP
+\fBsbbbir\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       sbbbir immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  sbbbir 0x66 dl
+                 80 da 66
+.RE
+
+.TP
+\fBsbbbmr\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - Memory, Register\fR
+.RE
+.RS 4
+Syntax       sbbbmr offset.16 register.16
+             sbbbmr base displacement.8 register.8
+             sbbbmr base displacement.16 register.8
+             sbbbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sbbbmr 0x4444 dl
+                 1a 16 44 44
+             2.  sbbbmr [bx+si] 2 dl
+                 1a 50 02
+             3.  sbbbmr [bx+si] 2048 dl
+                 1a 90 00 08
+             4.  sbbbmr [si] dl
+                 1a 14
+.RE
+
+.TP
+\fBsbbbrm\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - Register, Memory\fR
+.RE
+.RS 4
+Syntax       sbbbrm register.8 offset.16
+             sbbbrm register.8 base displacement.8
+             sbbbrm register.8 base displacement.16
+             sbbbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sbbbrm dl 0x4444
+                 18 16 44 44
+             2.  sbbbrm dl [bx+si] 2 
+                 18 50 02
+             3.  sbbbrm dl [bx+si] 2048
+                 18 80 00 08
+             4.  sbbbrm dl [si]
+                 18 14
+.RE
+
+.TP
+\fBsbbbrr\fR
+.RS 4
+Description  \fBSubtract Bytes with Borrow - Register, Register\fR
+.RE
+.RS 4
+Syntax       sbbbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sbbbrr dl al
+                 18 d0
+.RE
+
+.TP
+\fBsbbw8m\fR
+.RS 4
+Description  \fBSubtract Words with Borrow - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       sbbw8m immediate.8 offset.16
+             sbbw8m immediate.8 base displacement.8
+             sbbw8m immediate.8 base displacement.16
+             sbbw8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  sbbw8m 0x66 0x4444
+                 83 1e 44 44 66 
+             2.  sbbw8m 0x66 [bx+si] 2
+                 83 58 02 66 
+             3.  sbbw8m 0x66 [bx+si] 2048
+                 83 98 00 08 66 
+             4.  sbbw8m 0x66 [si]
+                 83 1c 66 
+.RE
+
+.TP
+\fBsbbw8r\fR
+.RS 4
+Description  \fBSubtract Words with Borrow - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       sbbw8r immediate.8 register.16
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  sbbw8r 0x66 dx
+                 83 da 66
+.RE
+
+.TP
+\fBsbbwi\fR
+.RS 4
+Description  \fBSubtract Words With Borrow - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       sbbwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  sbbwi 0x4444
+                 1d 44 44
+.RE
+
+.TP
+\fBsbbwim\fR
+.RS 4
+Description  \fBSubtract Words with Borrow - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       sbbwim immediate.16 offset.16
+             sbbwim immediate.16 base displacement.8
+             sbbwim immediate.16 base displacement.16
+             sbbwib immediate.16 base 
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  sbbwim 0x6666 0x4444
+                 81 1e 44 44 66 66
+             2.  sbbwim 0x4444 [bx+si] 2
+                 81 58 02 44 44
+             3.  sbbwim 0x4444 [bx+si] 2048
+                 81 98 00 08 44 44
+             4.  sbbwim 0x4444 [si]
+                 81 1c 44 44
+.RE
+
+.TP
+\fBsbbwir\fR
+.RS 4
+Description  \fBSubtract Words with Borrow - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       sbbwir immediate.16 register.16
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  sbbwir 0x4444 dx
+                 81 da 44 44
+.RE
+
+.TP
+\fBsbbwmr\fR
+.RS 4
+Description  \fBSubtract Words with Borrow - Memory, Register\fR
+.RE
+.RS 4
+Syntax       sbbwmr base offset.16
+             sbbwmr base displacement.8 register.16
+             sbbwmr base displacement.16 register.16
+             sbbwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sbbwmr 0x4444 dx
+                 1b 16 44 44
+             2.  sbbwmr [bx+si] 2 dl
+                 1b 50 02
+             3.  sbbwmr [bx+si] 2048 dl
+                 1b 90 00 08
+             4.  sbbwmr [si] dl
+                 1b 14
+.RE
+
+.TP
+\fBsbbwrm\fR
+.RS 4
+Description  \fBSubtract Words with Borrow - Register, Memory\fR
+.RE
+.RS 4
+Syntax       sbbwrm register.16 offset.16
+             sbbwrm register.16 base displacement.8
+             sbbwrm register.16 base displacement.16
+             sbbwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  sbbwrm dx 0x4444
+                 19 16 44 44
+             2.  sbbwrm dx [bx+si] 2 
+                 19 50 02
+             3.  sbbwrm dx [bx+si] 2048
+                 19 90 00 08
+             4.  sbbwrm dx [si]
+                 19 14
+.RE
+
+.TP
+\fBsbbwrr\fR
+.RS 4
+Description  \fBSubtract Words with Borrow - Register, Register\fR
+.RE
+.RS 4
+Syntax       sbbwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  sbbwrr dx ax
+                 19 d0
+.RE
+
+.TP
+\fBscasb\fR
+.RS 4
+Description  \fBString Compare - AL, ES:SI\fR
+.RE
+.RS 4
+Syntax       scasb
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  scasb
+                 ae
+.RE
+
+.TP
+\fBscasw\fR
+.RS 4
+Description  \fBString Compare - AX, ES:SI\fR
+.RE
+.RS 4
+Syntax       scasw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  scasw
+                 af
+.RE
+
+.TP
+\fBshl1bm\fR
+.RS 4
+Description  \fBLogical Shift Memory Byte Left by 1\fR
+.RE
+.RS 4
+Syntax       shl1bm offset.16 
+             shl1bm base displacement.8
+             shl1bm base displacement.16
+             shl1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shl1bm 0x4444
+                 d0 26 44 44
+             2.  shl1bm [bx+si] 2
+                 d0 60 02
+             3.  shl1bm [bx+si] 2048
+                 d0 a0 00 08
+             4.  shl1bm [si]
+                 d0 24
+.RE
+
+.TP
+\fBshl1br\fR
+.RS 4
+Description  \fBLogical Shift Byte Register Left by 1\fR
+.RE
+.RS 4
+Syntax       shl1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shl1br dl
+                 d0 e2
+.RE
+
+.TP
+\fBshl1wm\fR
+.RS 4
+Description  \fBLogical Shift Memory Word Left by 1\fR
+.RE
+.RS 4
+Syntax       shl1wm offset.16 
+             shl1wm base displacement.8
+             shl1wm base displacement.16
+             shl1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shl1wm 0x4444
+                 d1 26 44 44
+             2.  shl1wm [bx+si] 2
+                 d1 60 02
+             3.  shl1wm [bx+si] 2048
+                 d1 a0 00 08
+             4.  shl1wm [si]
+                 d1 24
+.RE
+
+.TP
+\fBshl1wr\fR
+.RS 4
+Description  \fBLogical Shift Word Register Left by 1\fR
+.RE
+.RS 4
+Syntax       shl1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shl1wr dx
+                 d1 e2
+.RE
+
+.TP
+\fBshlbm\fR
+.RS 4
+Description  \fBLogical Shift Memory Byte Left by CL\fR
+.RE
+.RS 4
+Syntax       shlbm offset.16 
+             shlbm base displacement.8
+             shlbm base displacement.16
+             shlbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shlbm 0x4444
+                 d2 26 44 44
+             2.  shlbm [bx+si] 2
+                 d2 60 02
+             3.  shlbm [bx+si] 2048
+                 d2 a0 00 08
+             4.  shlbm [si]
+                 d2 24
+.RE
+
+.TP
+\fBshlbr\fR
+.RS 4
+Description  \fBLogical Shift Byte Register Left by CL\fR
+.RE
+.RS 4
+Syntax       shlbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shlbr dl
+                 d2 e2
+.RE
+
+.TP
+\fBshlwm\fR
+.RS 4
+Description  \fBLogical Shift Memory Word Left by CL\fR
+.RE
+.RS 4
+Syntax       shlwm offset.16 
+             shlwm base displacement.8
+             shlwm base displacement.16
+             shlwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shlwm 0x4444
+                 d3 26 44 44
+             2.  shlwm [bx+si] 2
+                 d3 60 02
+             3.  shlwm [bx+si] 2048
+                 d3 a0 00 08
+             4.  shlwm [si]
+                 d3 24
+.RE
+
+.TP
+\fBshlwr\fR
+.RS 4
+Description  \fBLogical Shift Word Register Left by CL\fR
+.RE
+.RS 4
+Syntax       shlwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shlwr dx
+                 d3 e2
+.RE
+
+.TP
+\fBshr1bm\fR
+.RS 4
+Description  \fBLogical Shift Memory Byte Right by 1\fR
+.RE
+.RS 4
+Syntax       shr1bm offset.16 
+             shr1bm base displacement.8
+             shr1bm base displacement.16
+             shr1bm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shr1bm 0x4444
+                 d0 2e 44 44
+             2.  shr1bm [bx+si] 2
+                 d0 68 02
+             3.  shr1bm [bx+si] 2048
+                 d0 a8 00 08
+             4.  shr1bm [si]
+                 d0 2c
+.RE
+
+.TP
+\fBshr1br\fR
+.RS 4
+Description  \fBLogical Shift Byte Register Right by 1\fR
+.RE
+.RS 4
+Syntax       shr1br register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shr1br dl
+                 d0 ea
+.RE
+
+.TP
+\fBshr1wm\fR
+.RS 4
+Description  \fBLogical Shift Memory Word Right by 1\fR
+.RE
+.RS 4
+Syntax       shr1wm offset.16 
+             shr1wm base displacement.8
+             shr1wm base displacement.16
+             shr1wm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shr1wm 0x4444
+                 d1 2e 44 44
+             2.  shr1wm [bx+si] 2
+                 d1 68 02
+             3.  shr1wm [bx+si] 2048
+                 d1 a8 00 08
+             4.  shr1wm [si]
+                 d1 2c
+.RE
+
+.TP
+\fBshr1wr\fR
+.RS 4
+Description  \fBLogical Shift Word Register Right by 1\fR
+.RE
+.RS 4
+Syntax       shr1wr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shr1wr dx
+                 d1 ea
+.RE
+
+.TP
+\fBshrbm\fR
+.RS 4
+Description  \fBLogical Shift Memory Byte Right by CL\fR
+.RE
+.RS 4
+Syntax       shrbm offset.16 
+             shrbm base displacement.8
+             shrbm base displacement.16
+             shrbm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shrbm 0x4444
+                 d2 2e 44 44
+             2.  shrbm [bx+si] 2
+                 d2 68 02
+             3.  shrbm [bx+si] 2048
+                 d2 a8 00 08
+             4.  shrbm [si]
+                 d2 2c
+.RE
+
+.TP
+\fBshrbr\fR
+.RS 4
+Description  \fBLogical Shift Byte Register Right by CL\fR
+.RE
+.RS 4
+Syntax       shrbr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shrbr dl
+                 d2 ea
+.RE
+
+.TP
+\fBshrwm\fR
+.RS 4
+Description  \fBLogical Shift Memory Word Right by CL\fR
+.RE
+.RS 4
+Syntax       shrwm offset.16 
+             shrwm base displacement.8
+             shrwm base displacement.16
+             shrwm base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  shrwm 0x4444
+                 d3 2e 44 44
+             2.  shrwm [bx+si] 2
+                 d3 68 02
+             3.  shrwm [bx+si] 2048
+                 d3 a8 00 08
+             4.  shrwm [si]
+                 d3 2c
+.RE
+
+.TP
+\fBshrwr\fR
+.RS 4
+Description  \fBLogical Shift Word Register Right by CL\fR
+.RE
+.RS 4
+Syntax       shrwr register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  shrwr dx
+                 d3 ea
+.RE
+
+.TP
+\fBss\fR
+.RS 4
+Description  \fBSS Override Prefix\fR
+.RE
+.RS 4
+Syntax       ss instruction
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  ss movwdr 0x4444 dx
+                 36 8b 16 44 44 
+.RE
+
+.TP
+\fBstc\fR
+.RS 4
+Description  \fBSet Carry Flag\fR
+.RE
+.RS 4
+Syntax       stc
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  stc
+                 f9
+.RE
+
+.TP
+\fBstd\fR
+.RS 4
+Description  \fBSet Direction Flag\fR
+.RE
+.RS 4
+Syntax       std
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  std
+                 fd
+.RE
+
+.TP
+\fBsti\fR
+.RS 4
+Description  \fBSet Interrupt Flag\fR
+.RE
+.RS 4
+Syntax       sti
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  sti
+                 fb
+.RE
+
+.TP
+\fBstorb\fR
+.RS 4
+Description  \fBStore AL\fR
+.RE
+.RS 4
+Syntax       storb offset.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  storb 0x4444
+                 a0 44 44
+.RE
+
+.TP
+\fBstorw\fR
+.RS 4
+Description  \fBStore AX\fR
+.RE
+.RS 4
+Syntax       storw offset.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  storw 0x4444
+                 a1 44 44
+.RE
+
+.TP
+\fBstosb\fR
+.RS 4
+Description  \fBStore AL at ES:DI\fR
+.RE
+.RS 4
+Syntax       stosb
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  stosb
+                 aa
+.RE
+
+.TP
+\fBstosw\fR
+.RS 4
+Description  \fBStore AX at ES:DI\fR
+.RE
+.RS 4
+Syntax       stosw
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  stosw
+                 ab
+.RE
+
+.TP
+\fBsubb8m\fR
+.RS 4
+Description  \fBSubtract Bytes - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       subb8m immediate.8 offset.16
+             subb8m immediate.8 base displacement.8
+             subb8m immediate.8 base displacement.16
+             subb8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  subb8m 0x66 0x4444
+                 82 2e 44 44 66 
+             2.  subb8m 0x66 [bx+si] 2
+                 82 68 02 66 
+             3.  subb8m 0x66 [bx+si] 2048
+                 82 a8 00 08 66 
+             4.  subb8m 0x66 [si]
+                 82 2c 66 
+.RE
+
+.TP
+\fBsubb8r\fR
+.RS 4
+Description  \fBSubtract Bytes - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       subb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  subb8r 0x66 dl
+                 82 e8 66
+.RE
+
+.TP
+\fBsubbi\fR
+.RS 4
+Description  \fBSubtract Bytes - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       subbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  subbi 0x66
+                 2c 66
+.RE
+
+.TP
+\fBsubbim\fR
+.RS 4
+Description  \fBSubtract Bytes - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       subbim immediate.8 offset.16 
+             subbim immediate.8 base displacement.8
+             subbim immediate.8 base displacement.16
+             subbim immediate.8 base 
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  subbim 0x66 0x4444
+                 80 2e 44 44 66
+             2.  subbim 0x66 [bx+si] 2
+                 80 68 02 66
+             3.  subbim 0x66 [bx+si] 2048
+                 80 a8 00 08 66
+             4.  subbim 0x66 [si]
+                 80 2c 66
+.RE
+
+.TP
+\fBsubbir\fR
+.RS 4
+Description  \fBSubtract Bytes - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       subbir immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  subbir 0x66 dl
+                 80 ea 66
+.RE
+
+.TP
+\fBsubmr\fR
+.RS 4
+Description  \fBSubtract Bytes - Memory, Register\fR
+.RE
+.RS 4
+Syntax       subbbr base offset.16
+             subbmr base displacement.8 register.8
+             subbmr base displacement.16 register.8
+             subbbr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  subbmr 0x4444 dl
+                 2a 16 44 44
+             2.  subbmr [bx+si] 2 dl
+                 2a 50 02
+             3.  subbmr [bx+si] 2048 dl
+                 2a 90 00 08
+             4.  subbmr [si] dl
+                 2a 14
+.RE
+
+.TP
+\fBsubbrm\fR
+.RS 4
+Description  \fBSubtract Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       subbrm register.8 offset.16
+             subbrm register.8 base displacement.8
+             subbrm register.8 base displacement.16
+             subbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  subbrm dl 0x4444
+                 28 16 44 44
+             2.  subbrm dl [bx+si] 2 
+                 28 50 02
+             3.  subbrm dl [bx+si] 2048
+                 28 90 00 08
+             4.  subbrm dl [si]
+                 28 14
+.RE
+
+.TP
+\fBsubbrr\fR
+.RS 4
+Description  \fBSubtract Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       subbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  subbrr dl al
+                 28 d0
+.RE
+
+.TP
+\fBsubw8m\fR
+.RS 4
+Description  \fBSubtract Words - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       subw8m immediate.8 offset.16
+             subw8m immediate.8 base displacement.8
+             subw8m immediate.8 base displacement.16
+             subw8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  subw8m 0x66 0x4444
+                 83 2e 44 44 66 
+             2.  subw8m 0x66 [bx+si] 2
+                 83 68 02 66 
+             3.  subw8m 0x66 [bx+si] 2048
+                 83 a8 00 08 66 
+             4.  subw8m 0x66 [si]
+                 83 2c 66 
+.RE
+
+.TP
+\fBsubw8r\fR
+.RS 4
+Description  \fBSubtract Words - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       subw8r immediate.8 register.16
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  subw8r 0x66 dx
+                 83 ea 66
+.RE
+
+.TP
+\fBsubwi\fR
+.RS 4
+Description  \fBSubtract Words - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       subwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  subwi 0x4444
+                 2d 44 44
+.RE
+
+.TP
+\fBsubwim\fR
+.RS 4
+Description  \fBSubtract Words - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       subwim immediate.16 offset.16
+             subwim immediate.16 base displacement.8
+             subwim immediate.16 base displacement.16
+             subwim immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  subwim 0x6666 0x4444
+                 81 2e 44 44 66 66
+             2.  subwim 0x4444 [bx+si] 2
+                 81 68 02 44 44
+             3.  subwim 0x4444 [bx+si] 2048
+                 81 a8 00 08 44 44
+             4.  subwim 0x4444 [si]
+                 81 2c 44 44
+.RE
+
+.TP
+\fBsubwir\fR
+.RS 4
+Description  \fBSubtract Words - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       subwir immediate.16 register.16
+.RE
+.RS 4
+Size         4
+.RE
+.RS 4
+Example      1.  subwir 0x4444 dx
+                 81 ea 44 44
+.RE
+
+.TP
+\fBsubwmr\fR
+.RS 4
+Description  \fBSubtract Words - Memory, Register\fR
+.RE
+.RS 4
+Syntax       subwmr base offset.16
+             subwmr base displacement.8 register.16
+             subwmr base displacement.16 register.16
+             subwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  subwmr 0x4444 dl
+                 2b 16 44 44
+             2.  subwmr [bx+si] 2 dl
+                 2b 50 02
+             3.  subwmr [bx+si] 2048 dl
+                 2b 90 00 08
+             4.  subwmr [si] dl
+                 2b 14
+.RE
+
+.TP
+\fBsubwrm\fR
+.RS 4
+Description  \fBSubtract Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       subwrm register.16 offset.16
+             subwrm register.16 base displacement.8
+             subwrm register.16 base displacement.16
+             subwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  subwrm dx 0x4444
+                 29 16 44 44
+             2.  subwrm dx [bx+si] 2 
+                 29 50 02
+             3.  subwrm dx [bx+si] 2 048
+                 29 90 00 08
+             4.  subwrm dx [si]
+                 29 14
+.RE
+
+.TP
+\fBsubwrr\fR
+.RS 4
+Description  \fBSubtract Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       subwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  subwrr dx ax
+                 29 d0
+.RE
+
+.TP
+\fBtestbi\fR
+.RS 4
+Description  \fBTest Bytes - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       testbi immediate.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  testbi 0x66
+                 a8 66 
+.RE
+
+.TP
+\fBtestbim\fR
+.RS 4
+Description  \fBTest Bytes - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       testbim immediate.8 offset.16
+             testbim immediate.8 base displacement.8
+             testbim immediate.8 base displacement.16
+             testbim immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  testbim 0x66 0x4444
+                 f6 06 44 44 66 
+             2.  testbim 0x66 [bx+si] 2
+                 f6 40 02 66 
+             3.  testbim 0x66 [bx+si] 2048
+                 f6 80 00 08 66 
+             4.  testbim 0x66 [si]
+                 f6 04 66 
+.RE
+
+.TP
+\fBtestbir\fR
+.RS 4
+Description  \fBTest Bytes - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       testbir immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  testbir 0x66 dl
+                 f6 c2 66 
+.RE
+
+.TP
+\fBtestbrm\fR
+.RS 4
+Description  \fBTest Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       testbrm register.8 offset.16
+             testbrm register.8 base displacement.8
+             testbrm register.8 base displacement.16
+             testbrm register.8 base 
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  testbrm dl 0x4444
+                 84 16 44 44 
+             2.  testbrm dl [bx+si] 2
+                 84 50 02
+             3.  testbrm dl [bx+si] 2048
+                 84 90 00 08
+             4.  testbrm dl [si]
+                 84 14
+.RE
+
+.TP
+\fBtestbrr\fR
+.RS 4
+Description  \fBTest Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       testbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  testbrr dl al
+                 84 d0
+.RE
+
+.TP
+\fBtestwi\fR
+.RS 4
+Description  \fBTest Words - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       testwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  testwi 0x4444
+                 a9 44 44
+.RE
+
+.TP
+\fBtestwim\fR
+.RS 4
+Description  \fBTest Words - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       testwim immediate.16 offset.16 
+             testwim immediate.16 base displacement.8
+             testwim immediate.16 base displacement.16
+             testwim immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  testwim 0x6666 0x4444
+                 f7 06 44 44 66 66
+             2.  testwim 0x4444 [bx+si] 2
+                 f7 40 02 44 44
+             3.  testwim 0x4444 [bx+si] 2048
+                 f7 80 00 08 44 44
+             4.  testwim 0x4444 [si]
+                 f7 04 44 44
+.RE
+
+.TP
+\fBtestwir\fR
+.RS 4
+Description  \fBTest Words - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       testwir immediate.16 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  testwir 0x4444 dx
+                 f7 c2 44 44 
+.RE
+
+.TP
+\fBtestwrm\fR
+.RS 4
+Description  \fBTest Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       testwrm register.16 offset.16
+             testwrm register.16 base displacement.8
+             testwrm register.16 base displacement.16
+             testwrm register.16 base 
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  testwrm dx 0x4444
+                 85 16 44 44 
+             2.  testwrm dx [bx+si] 2
+                 85 50 02
+             3.  testwrm dx [bx+si] 2048
+                 85 90 00 08
+             4.  testwrm dx [si]
+                 85 14
+.RE
+
+.TP
+\fBtestwrr\fR
+.RS 4
+Description  \fBTest Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       testwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  testwrr dx ax
+                 85 d0
+.RE
+
+.TP
+\fBxchgbrm\fR
+.RS 4
+Description  \fBExchange Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       xchgbrm register.8 offset.16
+             xchgbrm register.8 base displacement.8
+             xchgbrm register.8 base displacement.16
+             xchgbrm register.8 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  xchgbrm dl 0x4444
+                 86 16 44 44
+             2.  xchgbrm dl [bx+si] 2
+                 86 50 02
+             3.  xchgbrm dl [bx+si] 2048
+                 86 90 00 08
+             4.  xchgbrm dl [si] 
+                 86 14
+.RE
+
+.TP
+\fBxchgbrr\fR
+.RS 4
+Description  \fBExchange Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       xchgbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  xchgbrr dl bl
+                 86 d3
+.RE
+
+.TP
+\fBxchgwr\fR
+.RS 4
+Description  \fBExchange Words - Register, AX\fR
+.RE
+.RS 4
+Syntax       xchgwr register.16
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  xchgwr dx
+                 92
+.RE
+
+.TP
+\fBxchgwrm\fR
+.RS 4
+Description  \fBExchange Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       xchgwrm register.16 offset.16
+             xchgwrm register.16 base displacement.8
+             xchgwrm register.16 base displacement.16
+             xchgwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  xchgwrm dx 0x4444
+                 87 16 44 44
+             2.  xchgbrm dx [bx+si] 2
+                 87 50 02
+             3.  xchgbrm dx [bx+si] 2048
+                 87 90 00 08
+             4.  xchgwrm dx [si] 
+                 87 14
+.RE
+
+.TP
+\fBxchgwrr\fR
+.RS 4
+Description  \fBExchange Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       xchgwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  xchgwrr dx bx
+                 87 d3
+.RE
+
+.TP
+\fBxlat\fR
+.RS 4
+Description  \fBLoad AL from DS:BX+AL\fR
+.RE
+.RS 4
+Syntax       xlat
+.RE
+.RS 4
+Size         1
+.RE
+.RS 4
+Example      1.  xlat
+                 d7
+.RE
+
+.TP
+\fBxorb8m\fR
+.RS 4
+Description  \fBExclusive OR Bytes - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       xorb8m immediate.8 offset.16 
+             xorb8m immediate.8 base displacement.8
+             xorb8m immediate.8 base displacement.16
+             xorb8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  xorb8m 0x66 0x4444
+                 82 36 44 44 66
+             2.  xorb8m 0x66 [bx+si] 2
+                 82 70 02 66
+             3.  xorb8m 0x66 [bx+si] 2048
+                 82 b0 00 08 66
+             4.  xorb8m 0x66 [si]
+                 82 34 66
+.RE
+
+.TP
+\fBxorb8r\fR
+.RS 4
+Description  \fBExclusive OR Bytes - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       xorb8r immediate.8 register.8
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  xorb8r 0x66 dl
+                 82 f2 66 
+.RE
+
+.TP
+\fBxorbi\fR
+.RS 4
+Description  \fBExclusive OR Bytes - Immediate, AL\fR
+.RE
+.RS 4
+Syntax       xorbi immediate.8 
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  xorbi 0x66
+                 34 66
+.RE
+
+.TP
+\fBxorbim\fR
+.RS 4
+Description  \fBExclusive OR Bytes - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       xorbim immediate.8 offset.16
+             xorbim immediate.8 base displacement.8
+             xorbim immediate.8 base displacement.16
+             xorbim immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  xorbim 0x66 0x4444
+                 80 36 44 44 66 
+             2.  xorbim 0x66 [bx+si] 2
+                 80 70 02 66 
+             3.  xorbim 0x66 [bx+si] 2048
+                 80 b0 00 08 66 
+             4.  xorbim 0x66 [si]
+                 80 34 66
+.RE
+
+.TP
+\fBxorbir\fR
+.RS 4
+Description  \fBExclusive OR Bytes - Immediate, Register\fR
+.RE
+.RS 4
+Syntax       xorbir immediate.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  xorbir 0x66 dl
+                 80 f2 66
+.RE
+
+.TP
+\fBxorbmr\fR
+.RS 4
+Description  \fBExclusive OR Bytes - Memory, Register\fR
+.RE
+.RS 4
+Syntax       xorbmr offset.16 register.8
+             xorbmr base displacement.8 register.8
+             xorbmr base displacement.16 register.8
+             xorbmr base register.8
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  xorbmr 0x4444 dl
+                 32 16 44 44
+             2.  xorbmr [bx+si] 2 dl
+                 32 50 02 
+             3.  xorbmr [bx+si] 2 dl048
+                 32 90 00 08
+             4.  xorbmr [si] dl
+                 32 14 
+.RE
+
+.TP
+\fBxorbrm\fR
+.RS 4
+Description  \fBExclusive OR Bytes - Register, Memory\fR
+.RE
+.RS 4
+Syntax       xorbrm register.8 offset.16
+             xorbrm register.8 base displacement.8
+             xorbrm register.8 base displacement.16
+             xorbrm register.8 base
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  xorbrm dl 0x4444
+                 30 16 44 44
+             2.  xorbrm dl [bx+si] 2
+                 30 50 02
+             3.  xorbrm dl [bx+si] 2048
+                 30 90 00 08
+             4.  xorbrm dl [si]
+                 30 14
+.RE
+
+.TP
+\fBxorbrr\fR
+.RS 4
+Description  \fBExclusive OR Bytes - Register, Register\fR
+.RE
+.RS 4
+Syntax       xorbrr register.8 register.8
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  xorbrr dl al
+                 30 d0 
+.RE
+
+.TP
+\fBxorw8m\fR
+.RS 4
+Description  \fBExclusive OR Words - 8-bit Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       xorw8m immediate.8 offset.16
+             xorw8m immediate.8 base displacement.8
+             xorw8m immediate.8 base displacement.16
+             xorw8m immediate.8 base
+.RE
+.RS 4
+Size         3 - 5
+.RE
+.RS 4
+Example      1.  xorw8m 0x66 0x4444
+                 83 36 44 44 66
+             2.  xorw8m 0x66 [bx+si] 2
+                 83 70 02 66
+             3.  xorw8m 0x66 [bx+si] 2048
+                 83 b0 00 08 66
+             4.  xorw8m 0x66 [si]
+                 83 34 66
+.RE
+
+.TP
+\fBxorw8r\fR
+.RS 4
+Description  \fBExclusive OR Words - 8-bit Immediate, Register\fR
+.RE
+.RS 4
+Syntax       xorw8r immediate.8 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  xorw8r 0x66 dx
+                 83 f2 66 
+.RE
+
+.TP
+\fBxorwi\fR
+.RS 4
+Description  \fBExclusive OR Words - Immediate, AX\fR
+.RE
+.RS 4
+Syntax       xorwi immediate.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  xorwi 0x4444
+                 35 44 44
+.RE
+
+.TP
+\fBxorwim\fR
+.RS 4
+Description  \fBExclusive OR Words - Immediate, Memory\fR
+.RE
+.RS 4
+Syntax       xorwim immediate.16 offset.16
+             xorwim immediate.16 base displacement.8
+             xorwim immediate.16 base displacement.16
+             xorwib immediate.16 base
+.RE
+.RS 4
+Size         4 - 6
+.RE
+.RS 4
+Example      1.  xorwim 0x4444 0x6666
+                 81 36 66 66 44 44
+             2.  xorwim 0x4444 [bx+si] 2
+                 81 70 02 44 44
+             3.  xorwim 0x4444 [bx+si] 2048
+                 81 b0 00 08 44 44
+             4.  xorwim 0x4444 [si]
+                 81 34 44 44
+.RE
+
+.TP
+\fBxorwir\fR
+.RS 4
+Description  \fBExclusive OR Immediate Word to Word Register\fR
+.RE
+.RS 4
+Syntax       xorwir immediate.16 register.16
+.RE
+.RS 4
+Size         3
+.RE
+.RS 4
+Example      1.  xorwir 0x4444 dx
+                 81 f2 44 44
+.RE
+
+.TP
+\fBxorwmr\fR
+.RS 4
+Description  \fBExclusive OR Words - Memory, Register\fR
+.RE
+.RS 4
+Syntax       xorwmr offset.16 register.16
+             xorwmr base displacement.8 register.16
+             xorwmr base displacement.16 register.16
+             xorwmr base register.16
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  xorwmr 0x4444 dx
+                 33 16 44 44
+             2.  xorwmr [bx+si] 2 dx
+                 33 50 02 
+             3.  xorwmr [bx+si] 2048 dx
+                 33 90 00 08
+             4.  xorwmr [si] dx
+                 33 14 
+.RE
+
+.TP
+\fBxorwrm\fR
+.RS 4
+Description  \fBExclusive OR Words - Register, Memory\fR
+.RE
+.RS 4
+Syntax       xorwrm register.16 offset.16
+             xorwrm register.16 base displacement.8
+             xorwrm register.16 base displacement.16
+             xorwrm register.16 base
+.RE
+.RS 4
+Size         2 - 4
+.RE
+.RS 4
+Example      1.  xorwrm dx 0x4444
+                 31 16 44 44
+             2.  xorwrm dx [bx+si] 2
+                 31 50 02
+             3.  xorwrm dx [bx+si] 2048
+                 31 90 00 08
+             4.  xorwrm dx [si]
+                 31 14
+.RE
+
+.TP
+\fBxorwrr\fR
+.RS 4
+Description  \fBExclusive OR Words - Register, Register\fR
+.RE
+.RS 4
+Syntax       xorwrr register.16 register.16
+.RE
+.RS 4
+Size         2
+.RE
+.RS 4
+Example      1.  xorwrr dx ax
+                 31 d0 
+.RE
+
+.SH AUTHOR
+Justin Swartz <justin.swartz@risingedge.co.za>
+
+.SH SEE ALSO
+Intel iAPX 86/88, 186/188 User's Manual

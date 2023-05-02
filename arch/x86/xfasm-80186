@@ -1,0 +1,144 @@
+immediate_immediate()
+{
+	reject bad_operand_count [ $# -ne 5 ]
+
+	local x_width=$1
+	local y_width=$2
+	local opcode=$3
+	local x=$4
+	local y=$5
+
+	byte $opcode
+	pack $x_width $x
+	pack $y_width $y
+}
+
+immediate_memory_register()
+{
+	reject bad_operand_count [ $# -lt 5 -o $# -gt 6 ]
+
+	local width=$1
+	local opcode=$2
+	local immediate=$3
+	local base=
+
+	case $4 in
+	"[bx+si]") base=0 ;;
+	"[bx+di]") base=1 ;;
+	"[bp+si]") base=2 ;;
+	"[bp+di]") base=3 ;;
+	"[si]")    base=4 ;;
+	"[di]")    base=5 ;;
+	"[bp]")    base=6 ;;
+	"[bx]")    base=7 ;;
+	esac
+
+	byte $opcode
+
+	if [ $# -eq 5 ]
+	then
+		local register=$5
+
+		if [ -z $base ]
+		then
+			local offset=$4
+			modrm $AM_MOD_NONE $register $AM_OFFSET
+			word $offset
+		else
+			modrm $AM_MOD_NONE $register $base 
+		fi
+
+	elif [ $# -eq 6 ]
+	then
+		local displacement=$5
+		local register=$6
+
+		if is_8bit $displacement
+		then
+			modrm $AM_MOD_D8 $register $base
+			byte $displacement
+		else
+			modrm $AM_MOD_D16 $register $base
+			word $displacement
+		fi
+	fi
+
+	pack $width $immediate
+}
+
+immediate_register_register()
+{
+	reject bad_operand_count [ $# -ne 5 ]
+
+	local width=$1
+	local opcode=$2
+	local immediate=$3
+	local y=$4
+	local x=$5
+	local mode=$(($y | $x << AM_REG | AM_MODE_R))
+
+	byte $opcode $mode
+	pack $width $immediate
+}
+
+encode_80186()
+{
+	local mnemonic=$1
+	shift 1
+
+	case $mnemonic in
+		"boundwmr")  memory_register 0142 $@ ;;
+		"enter")     immediate_immediate 16 8 0310 $@ ;; 
+		"imulw8mr")  immediate_memory_register 8 0153 $@ ;;
+		"imulw8rr")  immediate_register_register 8 0153 $@ ;;
+		"imulwimr")  immediate_memory_register 16 0151 $@ ;;
+		"imulwirr")  immediate_register_register 16 0151 $@ ;;
+		"insb")      opcode 0154 ;;
+		"insw")      opcode 0155 ;;
+		"leave")     opcode 0311 ;;
+		"outsb")     opcode 0156 ;;
+		"outsw")     opcode 0157 ;;
+		"popaw")     opcode 0141 ;;
+		"pushaw")    opcode 0140 ;;
+		"pushb")     immediate 8 0152 $@ ;;
+		"pushw")     immediate 16 0150 $@ ;;
+		"rclb8m")    immediate_memory 8 0300 0002 $@ ;;
+		"rclb8r")    immediate_register0 8 0300 0002 $@ ;;
+		"rclw8m")    immediate_memory 8 0301 0002 $@ ;;
+		"rclw8r")    immediate_register0 8 0301 0002 $@ ;;
+		"rcrb8m")    immediate_memory 8 0300 0003 $@ ;;
+		"rcrb8r")    immediate_register0 8 0300 0003 $@ ;;
+		"rcrw8m")    immediate_memory 8 0301 0003 $@ ;;
+		"rcrw8r")    immediate_register0 8 0301 0003 $@ ;;
+		"rolb8m")    immediate_memory 8 0300 0000 $@ ;;
+		"rolb8r")    immediate_register0 8 0300 0000 $@ ;;
+		"rolw8m")    immediate_memory 8 0301 0000 $@ ;;
+		"rolw8r")    immediate_register0 8 0301 0000 $@ ;;
+		"rorb8m")    immediate_memory 8 0300 0001 $@ ;;
+		"rorb8r")    immediate_register0 8 0300 0001 $@ ;;
+		"rorw8m")    immediate_memory 8 0301 0001 $@ ;;
+		"rorw8r")    immediate_register0 8 0301 0001 $@ ;;
+		"shlb8m")    immediate_memory 8 0300 0004 $@ ;;
+		"shlb8r")    immediate_register0 8 0300 0004 $@ ;;
+		"shlw8m")    immediate_memory 8 0301 0004 $@ ;;
+		"shlw8r")    immediate_register0 8 0301 0004 $@ ;;
+		"shrb8m")    immediate_memory 8 0300 0005 $@ ;;
+		"shrb8r")    immediate_register0 8 0300 0005 $@ ;;
+		"shrw8m")    immediate_memory 8 0301 0005 $@ ;;
+		"shrw8r")    immediate_register0 8 0301 0005 $@ ;;
+		"salb8m")    immediate_memory 8 0300 0006 $@ ;;
+		"salb8r")    immediate_register0 8 0300 0006 $@ ;;
+		"salw8m")    immediate_memory 8 0301 0006 $@ ;;
+		"salw8r")    immediate_register0 8 0301 0006 $@ ;;
+		"sarb8m")    immediate_memory 8 0300 0007 $@ ;;
+		"sarb8r")    immediate_register0 8 0300 0007 $@ ;;
+		"sarw8m")    immediate_memory 8 0301 0007 $@ ;;
+		"sarw8r")    immediate_register0 8 0301 0007 $@ ;;
+		*)           encode_8086 $mnemonic $@ ;;
+	esac
+}
+
+encode()
+{
+	encode_80186 $@
+}

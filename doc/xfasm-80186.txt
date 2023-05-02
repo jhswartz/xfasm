@@ -1,0 +1,519 @@
+xfasm-80186(1)         Crossed Fingers Assembler Manual        xfasm-80186(1)
+
+NAME
+       xfasm-80186 - i80186 Instruction Encoder
+
+INSTRUCTIONS
+
+       boundwmr
+           Description  Test Lower and Upper Boundary Values against Register
+           Syntax       boundwmr offset.16 register.16
+                        boundwmr base displacement.8 register.16
+                        boundwmr base displacement.16 register.16
+                        boundwmr base register.16
+           Size         2 - 4
+           Example      1.  boundwmr 0x4444 dx
+                            62 16 44 44
+                        2.  boundwmr [bx+si] 2 dx
+                            62 50 02
+                        3.  boundwmr [bx+si] 2048 dx
+                            62 90 00 08
+                        4.  boundwmr [si] dx
+                            62 10
+
+       imulw8mr
+           Description  Multiply Words (Signed) - Immediate.8,
+                                                  Memory -> Register
+           Syntax       imulw8mr immediate.8 offset.16 register.16
+                        imulw8mr immediate.8 base displacement.8 register.16
+                        imulw8mr immediate.8 base displacement.16 register.16
+                        imulw8mr immediate.8 base register.16
+           Size         3 - 5
+           Example      1.  imulw8mr 0x66 0x4444 dx
+                            6b 16 44 44 66
+                        2.  imulw8mr 0x66 [bx+si] 2 dx
+                            6b 50 02 66
+                        3.  imulw8mr 0x66 [bx+si] 2048 dx
+                            6b 90 00 08 66
+                        4.  imulw8mr 0x66 [si] dx
+                            6b 14 66
+
+       imulw8rr
+           Description  Multiply Words (Signed) - Immediate.8,
+                                                  Register -> Register
+           Syntax       imulw8rr immediate.8 register.16 register.16
+           Size         3
+           Example      1.  imulw8rr 0x66 ax dx
+                            6b d0 66
+
+       imulwimr
+           Description  Mulyiply Words (Signed) - Immediate,
+                                                  Memory -> Register
+           Syntax       imulwimr immediate.16 offset.16 register.16
+                        imulwimr immediate.16 base displacement.8 register.16
+                        imulwimr immediate.16 base displacement.16
+           register.16
+                        imulwimr immediate.16 base register.16
+           Size         4 - 6
+           Example      1.  imulwimr 0x6666 0x4444 dx
+                            69 16 44 44 66 66
+                        2.  imulwimr 0x6666 [bx+si] 2 dx
+                            69 50 02 66 66
+                        3.  imulwimr 0x6666 [bx+si] 2048 dx
+                            69 90 00 08 66 66
+                        4.  imulwimr 0x6666 [si] dx
+                            69 14 66 66
+
+       imulwirr
+           Description  Multiply Words (Signed) - Immediate,
+                                                  Register -> Register
+           Syntax       imulwirr immediate.16 register.16 register.16
+           Size         4
+           Example      1.  imulwirr 0x4444 ax dx
+                            69 d0 44 44
+
+       insb
+           Description  Load Memory Byte at ES:DI from I/O port in DX
+           Syntax       insb
+           Size         1
+           Example      1.  insb
+                            6c
+
+       insw
+           Description  Load Memory Word at ES:DI from I/O port in DX
+           Syntax       insw
+           Size         1
+           Example      1.  insw
+                            6d
+
+       enter
+           Description  Create Stack Frame
+           Syntax       enter immediate.16 immediate.8
+           Size         4
+           Example      1.  enter 0x4444 0x66
+                            c8 44 44 66
+
+       leave
+           Description  Discard Stack Frame
+           Syntax       leave
+           Size         1
+           Example      1.  leave
+                            c9
+
+       outsb
+           Description  Write Byte at ES:DI to I/O port in DX
+           Syntax       outsb
+           Size         1
+           Example      1.  outsb
+                            6e
+
+       outsw
+           Description  Write Word at ES:DI to I/O port in DX
+           Syntax       outsw
+           Size         1
+           Example      1.  outsw
+                            6f
+
+       popaw
+           Description  Load all General Word Registers from Stack
+           Syntax       popaw
+           Size         1
+           Example      1.  popaw
+                            61
+
+       pushaw
+           Description  Store all General Word Registers on Stack
+           Syntax       pushaw
+           Size         1
+           Example      1.  pushaw
+                            60
+
+       pushb
+           Description  Store Immediate Byte on Stack
+           Syntax       pushb immediate.8
+           Size         2
+           Example      1.  pushb 0x66
+                            6a 66
+
+       pushw
+           Description  Store Immediate Word on Stack
+           Syntax       pushw immediate.16
+           Size         3
+           Example      1.  pushw 0x4444
+                            68 44 44
+
+       rclbm8
+           Description  Rotate Memory Byte Left through Carry
+           Syntax       rclb8m immediate.8 offset.16
+                        rclb8m immediate.8 base displacement.8
+                        rclb8m immediate.8 base displacement.16
+                        rclb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rclb8m 0x66 0x4444
+                            c0 16 44 44 66
+                        2.  rclb8m 0x66 [bx+si] 2
+                            c0 50 02 66
+                        3.  rclb8m 0x66 [bx+si] 2048
+                            c0 90 00 08 66
+                        4.  rclb8m 0x66 [si]
+                            c0 14 66
+
+       rclb8r
+           Description  Rotate Byte Register Left through Carry
+           Syntax       rclb8r immediate.8 register.8
+           Size         3
+           Example      1.  rclb8r 0x66 dl
+                            c1 d2 66
+
+       rclw8m
+           Description  Rotate Memory Word Left through Carry
+           Syntax       rclw8m immediate.8 offset.16
+                        rclw8m immediate.8 base displacement.8
+                        rclw8m immediate.8 base displacement.16
+                        rclw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rclw8m 0x66 0x4444
+                            c1 16 44 44 66
+                        2.  rclw8m 0x66 [bx+si] 2
+                            c1 50 02 66
+                        3.  rclw8m 0x66 [bx+si] 2048
+                            c1 90 00 08 66
+                        4.  rclw8m 0x66 [si]
+                            c1 14 66
+
+       rclw8r
+           Description  Rotate Word Register Left through Carry
+           Syntax       rclw8r immediate.8 register.16
+           Size         3
+           Example      1.  rclw8r 0x66 dl
+                            c1 d2 66
+
+       rcrb8m
+           Description  Rotate Memory Byte Right through Carry
+           Syntax       rcrb8m immediate.8 offset.16
+                        rcrb8m immediate.8 base displacement.8
+                        rcrb8m immediate.8 base displacement.16
+                        rcrb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rcrb8m 0x66 0x4444
+                            c0 1e 44 44 66
+                        2.  rcrb8m 0x66 [bx+si] 2
+                            c0 58 02 66
+                        3.  rcrb8m 0x66 [bx+si] 2048
+                            c0 98 00 08 66
+                        4.  rcrb8m 0x66 [si]
+                            c0 1c 66
+
+       rcrb8r
+           Description  Rotate Byte Register Right through Carry
+           Syntax       rcrb8r immediate.8 register.8
+           Size         3
+           Example      1.  rcrb8r 0x66 dl
+                            c0 da 66
+
+       rcrw8m
+           Description  Rotate Memory Word Right through Carry
+           Syntax       rcrw8m immediate.8 offset.16
+                        rcrw8m immediate.8 base displacement.8
+                        rcrw8m immediate.8 base displacement.16
+                        rcrw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rcrw8m 0x66 0x4444
+                            c1 1e 44 44 66
+                        2.  rcrw8m 0x66 [bx+si] 2
+                            c1 58 02 66
+                        3.  rcrw8m 0x66 [bx+si] 2048
+                            c1 98 00 08 66
+                        4.  rcrw8m 0x66 [si]
+                            c1 1c 66
+
+       rcrw8r
+           Description  Rotate Word Register Right through Carry
+           Syntax       rcrw8r immediate.8 register.16
+           Size         3
+           Example      1.  rcrw8r 0x66 dx
+                            c1 da 66
+
+       rolb8m
+           Description  Rotate Memory Byte Left
+           Syntax       rolb8m immediate.8 offset.16
+                        rolb8m immediate.8 base displacement.8
+                        rolb8m immediate.8 base displacement.16
+                        rolb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rolb8m 0x66 0x4444
+                            c0 06 44 44 66
+                        2.  rolb8m 0x66 [bx+si] 2
+                            c0 40 02 66
+                        3.  rolb8m 0x66 [bx+si] 2048
+                            c0 80 00 08 66
+                        4.  rolb8m 0x66 [si]
+                            c0 04 66
+
+       rolb8r
+           Description  Rotate Byte Register Left
+           Syntax       rolb8r immediate.8 register.8
+           Size         3
+           Example      1.  rolb8r 0x66 dl
+                            c0 c2 66
+
+       rolw8m
+           Description  Rotate Memory Word Left
+           Syntax       rolw8m immediate.8 offset.16
+                        rolw8m immediate.8 base displacement.8
+                        rolw8m immediate.8 base displacement.16
+                        rolw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rolw8m 0x66 0x4444
+                            c1 06 44 44 66
+                        2.  rolw8m 0x66 [bx+si] 2
+                            c1 40 02 66
+                        3.  rolw8m 0x66 [bx+si] 2048
+                            c1 80 00 08 66
+                        4.  rolw8m 0x66 [si]
+                            c1 04 66
+
+       rolw8r
+           Description  Rotate Word Register Left
+           Syntax       rolw8r immediate.8 register.16
+           Size         3
+           Example      1.  rolw8r 0x66 dl
+                            c1 c2 66
+
+       rorb8m
+           Description  Rotate Memory Byte Right
+           Syntax       rorb8m immediate.8 offset.16
+                        rorb8m immediate.8 base displacement.8
+                        rorb8m immediate.8 base displacement.16
+                        rorb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rorb8m 0x66 0x4444
+                            c0 0e 44 44 66
+                        2.  rorb8m 0x66 [bx+si] 2
+                            c0 48 02 66
+                        3.  rorb8m 0x66 [bx+si] 2048
+                            c0 88 00 08 66
+                        4.  rorb8m 0x66 [si]
+                            c0 0c 66
+
+       rorb8r
+           Description  Rotate Byte Register Right
+           Syntax       rorb8r immediate.8 register.8
+           Size         3
+           Example      1.  rorb8r 0x66 dl
+                            c0 ca 66
+
+       rorw8m
+           Description  Rotate Memory Word Right
+           Syntax       rorw8m immediate.8 offset.16
+                        rorw8m immediate.8 base displacement.8
+                        rorw8m immediate.8 base displacement.16
+                        rorw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  rorw8m 0x66 0x4444
+                            c1 0e 44 44 66
+                        2.  rorw8m 0x66 [bx+si] 2
+                            c1 48 02 66
+                        3.  rorw8m 0x66 [bx+si] 2048
+                            c1 88 00 08 66
+                        4.  rorw8m 0x66 [si]
+                            c1 0c 66
+
+       rorw8r
+           Description  Rotate Word Register Right
+           Syntax       rorw8r immediate.8 register.16
+           Size         3
+           Example      1.  rorw8r 0x66 dx
+                            c1 ca 66
+
+       shlb8m
+           Description  Logical Shift Memory Byte Left
+           Syntax       shlb8m immediate.8 offset.16
+                        shlb8m immediate.8 base displacement.8
+                        shlb8m immediate.8 base displacement.16
+                        shlb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  shlb8m 0x66 0x4444
+                            c0 26 44 44 66
+                        2.  shlb8m 0x66 [bx+si] 2
+                            c0 60 02 66
+                        3.  shlb8m 0x66 [bx+si] 2048
+                            c0 a0 00 08 66
+                        4.  shlb8m 0x66 [si]
+                            c0 24 66
+
+       shlb8r
+           Description  Logical Shift Byte Register Left
+           Syntax       shlb8r immediate.8 register.8
+           Size         3
+           Example      1.  shlb8r 0x66 dl
+                            c0 e2 66
+
+       shlw8m
+           Description  Logical Shift Memory Word Left
+           Syntax       shlw8m immediate.8 offset.16
+                        shlw8m immediate.8 base displacement.8
+                        shlw8m immediate.8 base displacement.16
+                        shlw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  shlw8m 0x66 0x4444
+                            c1 26 44 44 66
+                        2.  shlw8m 0x66 [bx+si] 2
+                            c1 60 02 66
+                        3.  shlw8m 0x66 [bx+si] 2048
+                            c1 a0 00 08 66
+                        4.  shlw8m 0x66 [si]
+                            c1 24 66
+
+       shlw8r
+           Description  Logical Shift Word Register Left
+           Syntax       shlw8r immediate.8 register.16
+           Size         3
+           Example      1.  shlw8r 0x66 dx
+                            c1 e2 66
+
+       shrb8bd
+           Description  Logical Shift Memory Byte Right
+           Syntax       shrb8m immediate.8 offset.16
+                        shrb8m immediate.8 base displacement.8
+                        shrb8m immediate.8 base displacement.16
+                        shrb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  shrb8m 0x66 0x4444
+                            c0 2e 44 44 66
+                        2.  shrb8m 0x66 [bx+si] 2
+                            c0 68 02 66
+                        3.  shrb8m 0x66 [bx+si] 2048
+                            c0 a8 00 08 66
+                        4.  shrb8m 0x66 [si]
+                            c0 2c 66
+
+       shrb8r
+           Description  Logical Shift Byte Register Right
+           Syntax       shrb8r immediate.8 register.8
+           Size         3
+           Example      1.  shrb8r 0x66 dl
+                            c0 ea 66
+
+       shrw8m
+           Description  Logical Shift Memory Word Right
+           Syntax       shrw8m immediate.8 offset.16
+                        shrw8m immediate.8 base displacement.8
+                        shrw8m immediate.8 base displacement.16
+                        shrw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  shrw8m 0x66 0x4444
+                            c1 2e 44 44 66
+                        2.  shrw8m 0x66 [bx+si] 2
+                            c1 68 02 66
+                        3.  shrw8m 0x66 [bx+si] 2048
+                            c1 a8 00 08 66
+                        4.  shrw8m 0x66 [si]
+                            c1 2c 66
+
+       shrw8r
+           Description  Logical Shift Word Register Right
+           Syntax       shrw8r immediate.8 register.16
+           Size         3
+           Example      1.  shrw8r 0x66 dx
+                            c1 ea 66
+
+       salb8m
+           Description  Arithmetic Shift Memory Byte Left
+           Syntax       salb8m immediate.8 offset.16
+                        salb8m immediate.8 base displacement.8
+                        salb8m immediate.8 base displacement.16
+                        salb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  salb8m 0x66 0x4444
+                            c0 36 44 44 66
+                        2.  salb8m 0x66 [bx+si] 2
+                            c0 70 02 66
+                        3.  salb8m 0x66 [bx+si] 2048
+                            c0 b0 00 08 66
+                        4.  salb8m 0x66 [si]
+                            c0 34 66
+
+       salb8r
+           Description  Arithmetic Shift Byte Register Left
+           Syntax       salb8r immediate.8 register.8
+           Size         3
+           Example      1.  salb8r 0x66 dl
+                            c0 f2 66
+
+       salw8m
+           Description  Arithmetic Shift Memory Word Left
+           Syntax       salw8m immediate.8 offset.16
+                        salw8m immediate.8 base displacement.8
+                        salw8m immediate.8 base displacement.16
+                        salw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  salw8m 0x66 0x4444
+                            c1 36 44 44 66
+                        2.  salw8m 0x66 [bx+si] 2
+                            c1 70 02 66
+                        3.  salw8m 0x66 [bx+si] 2048
+                            c1 b0 00 08 66
+                        4.  salw8m 0x66 [si]
+                            c1 34 66
+
+       salw8r
+           Description  Arithmetic Shift Word Register Left
+           Syntax       salw8r immediate.8 register.16
+           Size         3
+           Example      1.  salw8r 0x66 dx
+                            c1 f2 66
+
+       sarb8m
+           Description  Arithmetic Shift Memory Byte Right
+           Syntax       sarb8m immediate.8 offset.16
+                        sarb8m immediate.8 base displacement.8
+                        sarb8m immediate.8 base displacement.16
+                        sarb8m immediate.8 base
+           Size         3 - 5
+           Example      1.  sarb8m 0x66 0x4444
+                            c0 3e 44 44 66
+                        2.  sarb8m 0x66 [bx+si] 2
+                            c0 78 02 66
+                        3.  sarb8m 0x66 [bx+si] 2048
+                            c0 b8 00 08 66
+                        4.  sarb8m 0x66 [si]
+                            c0 3c 66
+
+       sarb8r
+           Description  Arithmetic Shift Byte Register Right
+           Syntax       sarb8r immediate.8 register.8
+           Size         3
+           Example      1.  sarb8r 0x66 dl
+                            c0 fa 66
+
+       sarw8m
+           Description  Arithmetic Shift Memory Word Right
+           Syntax       sarw8m immediate.8 offset.16
+                        sarw8m immediate.8 base displacement.8
+                        sarw8m immediate.8 base displacement.16
+                        sarw8m immediate.8 base
+           Size         3 - 5
+           Example      1.  sarw8m 0x66 0x4444
+                            c1 3e 44 44 66
+                        2.  sarw8m 0x66 [bx+si] 2
+                            c1 78 02 66
+                        3.  sarw8m 0x66 [bx+si] 2048
+                            c1 b8 00 08 66
+                        4.  sarw8m 0x66 [si]
+                            c1 3c 66
+
+       sarw8r
+           Description  Arithmetic Shift Word Register Right
+           Syntax       sarw8r immediate.8 register.16
+           Size         3
+           Example      1.  sarw8r 0x66 dx
+                            c1 fa 66
+
+AUTHOR
+       Justin Swartz <justin.swartz@risingedge.co.za>
+
+SEE ALSO
+       xfasm-8086(1), and the "Intel iAPX 86/88, 186/188 User's Manual"
+
+xfasm 0.1                          May 2023                    xfasm-80186(1)

@@ -1,0 +1,339 @@
+xfasm-80286(1)         Crossed Fingers Assembler Manual        xfasm-80286(1)
+
+NAME
+       xfasm-80286 - i80286 Instruction Encoder
+
+INSTRUCTIONS
+
+       arplrm
+           Description  Adjust RPL Field of Selector
+           Syntax       arplrm register.16 offset.16
+                        arplrm register.16 base displacement.8
+                        arplrm register.16 base displacement.16
+                        arplrm register.16 base
+           Size         2 - 4
+           Example      1.  arplrm dx 0x4444
+                            63 16 44 44
+                        2.  arplrm dx [bx+si] 2
+                            63 50 02
+                        3.  arplrm dx [bx+si] 2048
+                            63 90 00 08
+                        4.  arplrm dx [si]
+                            63 d0
+
+       arplrr
+           Description  Adjust RPL Field of Selector
+           Syntax       arplrr register.16 register.16
+           Size         2
+           Example      1.  arplrr dx ax
+                            63 d0
+
+       clts
+           Description  Clear Task Switched Flag
+           Syntax       clts
+           Size         2
+           Example      1.  clts
+                            0f 06
+
+       larmr
+           Description  Load Access Rights Byte
+           Syntax       larmr offset.16 register.16
+                        larmr base displacement.8 register.16
+                        larmr base displacement.16 register.16
+                        larmr base register.16
+           Size         3 - 5
+           Example      1.  larmr 0x4444 dx
+                            0f 02 16 44 44
+                        2.  larmr [bx+si] 2 dx
+                            0f 02 50 02
+                        3.  larmr [bx+si] 2048 dx
+                            0f 02 90 00 08
+                        4.  larmr [si] dx
+                            0f 02 14
+
+       larrr
+           Description  Load Access Rights Byte
+           Syntax       larrr register.16 register.16
+           Size         2
+           Example      1.  larrr ax dx
+                            0f 02 c2
+
+       lgdtwm
+           Description  Load Global Descriptor Table Register
+           Syntax       lgdtwm offset.16
+                        lgdtwm base displacement.8
+                        lgdtwm base displacement.16
+                        lgdtwm base
+           Size         3 - 5
+           Example      1.  lgdtwm 0x4444
+                            0f 01 16 44 44
+                        2.  lgdtwm [bx+si] 2
+                            0f 01 50 02
+                        3.  lgdtwm [bx+si] 2048
+                            0f 01 90 00 08
+                        4.  lgdtwm [si]
+                            0f 01 14
+
+       lidtwm
+           Description  Load Interrupt Descriptor Table Register
+           Syntax       lidtwm offset.16
+                        lidtwm base displacement.8
+                        lidtwm base displacement.16
+                        lidtwm base
+           Size         3 - 5
+           Example      1.  lidtwm 0x4444
+                            0f 01 1e 44 44
+                        2.  lidtwm [bx+si] 2
+                            0f 01 58 02
+                        3.  lidtwm [bx+si] 2048
+                            0f 01 98 00 08
+                        4.  lidtwm [si]
+                            0f 01 1c
+
+       lldtm
+           Description  Load Local Descriptor Table Register
+           Syntax       lldtm offset.16
+                        lldtm base displacement.8
+                        lldtm base displacement.16
+                        lldtm base
+           Size         3 - 5
+           Example      1.  lldtm 0x4444
+                            0f 00 16 44 44
+                        2.  lldtm [bx+si] 2
+                            0f 00 50 02
+                        3.  lldtm [bx+si] 2
+                            0f 00 90 00 08
+                        4.  lldtm [si]
+                            0f 00 14
+
+       lldtr
+           Description  Load Local Descriptor Table Register
+           Syntax       lldtr register.16
+           Size         3
+           Example      1.  lldtr dx
+                            0f 00 d2
+
+       lmswm
+           Description  Load Machine Status Word
+           Syntax       lmswm offset.16
+                        lmswm base displacement.8
+                        lmswm base displacement.16
+                        lmswm base
+           Size         3 - 5
+           Example      1.  lmswm 0x4444
+                            0f 01 36 44 44
+                        2.  lmswm [bx+si] 2
+                            0f 01 70 02
+                        3.  lmswm [bx+si] 2048
+                            0f 01 b0 00 08
+                        4.  lmswm [si]
+                            0f 01 34
+
+       lmswr
+           Description  Load Machine Status Word
+           Syntax       lmswr register.16
+           Size         3
+           Example      1.  lmswr dx
+                            0f 01 f2
+
+       lslmr
+           Description  Load Segment Limit
+           Syntax       lslmr offset.16
+                        lslmr base displacement.8
+                        lslmr base displacement.15
+                        lslmr base
+           Size         3 - 5
+           Example      1.  lslmr 0x4444
+                            0f 03 16 44 44
+                        2.  lslmr [bx+si] 2
+                            0f 03 50 02
+                        3.  lslmr [bx+si] 2048
+                            0f 03 90 00 08
+                        4.  lslmr [si]
+                            0f 03 14
+
+       lslrr
+           Description  Load Segment Limit
+           Syntax       lslrr register.16
+           Size         3
+           Example      1.  lslrr dx
+                            0f 03 c2
+
+       ltrm
+           Description  Load Task Register
+           Syntax       ltrm offset.16
+                        ltrm base displacement.8
+                        ltrm base displacement.16
+                        ltrm base
+           Size         3 - 5
+           Example      1.  ltrm 0x4444
+                            0f 00 1e 44 44
+                        2.  ltrm [bx+si] 2
+                            0f 00 58 02
+                        3.  ltrm [bx+si] 2048
+                            0f 00 98 00 08
+                        4.  ltrm [si]
+                            0f 00 1c
+
+       ltrr
+           Description  Load Task Register
+           Syntax       ltrr register.16
+           Size         3
+           Example      1.  ltrr dx
+                            0f 00 da
+
+       sgdtwm
+           Description  Store Global Descriptor Table Register
+           Syntax       sgdtwm offset.16
+                        sgdtwm base displacement.8
+                        sgdtwm base displacement.16
+                        sgdtwm base
+           Size         3 - 5
+           Example      1.  sgdtwm 0x4444
+                            0f 01 06 44 44
+                        2.  sgdtwm [bx+si] 2
+                            0f 01 40 02
+                        3.  sgdtwm [bx+si] 2048
+                            0f 01 80 00 08
+                        4.  sgdtwm [si]
+                            0f 01 04
+
+       sidtwm
+           Description  Store Interrupt Descriptor Table Register
+           Syntax       sidtwm offset.16
+                        sidtwm base displacement.8
+                        sidtwm base displacement.16
+                        sidtwm base
+           Size         3 - 5
+           Example      1.  sidtwm 0x4444
+                            0f 01 0e 44 44
+                        2.  sidtwm [bx+si] 2
+                            0f 01 48 02
+                        3.  sidtwm [bx+si] 2048
+                            0f 01 88 00 08
+                        4.  sidtwm [si]
+                            0f 01 0c
+
+       sldtm
+           Description  Load Local Descriptor Table Register
+           Syntax       sldtm offset.16
+                        sldtm base displacement.8
+                        sldtm base displacement.16
+                        sldtm base
+           Size         3 - 5
+           Example      1.  sldtm 0x4444
+                            0f 00 06 44 44
+                        2.  sldtm [bx+si] 2
+                            0f 00 40 02
+                        3.  sldtm [bx+si] 2048
+                            0f 00 80 00 08
+                        4.  sldtm [si]
+                            0f 00 04
+
+       sldtr
+           Description  Store Local Descriptor Table Register
+           Syntax       sldtr register.16
+           Size         3
+           Example      1.  sldtr dx
+                            0f 00 c2
+
+       smswm
+           Description  Store Machine Status Word
+           Syntax       smswm offset.16
+                        smswm base displacement.8
+                        smswm base displacement.16
+                        smswm base
+           Size         3 - 5
+           Example      1.  smswm 0x4444
+                            0f 01 26 44 44
+                        2.  smswm [bx+si] 2
+                            0f 01 60 02
+                        3.  smswm [bx+si] 2048
+                            0f 01 a0 00 08
+                        4.  smswm [si]
+                            0f 01 24
+
+       smswr
+           Description  Store Machine Status Word
+           Syntax       smswr register.16
+           Size         3
+           Example      1.  smswr dx
+                            0f 01 e2
+
+       strm
+           Description  Store Task Register
+           Syntax       strm offset.16
+                        strm base displacement.8
+                        strm base displacement.16
+                        strm base
+           Size         3 - 5
+           Example      1.  strm 0x4444
+                            0f 00 0e 44 44
+                        2.  strbd [bx+si] 2
+                            0f 00 48 02
+                        3.  strbd [bx+si] 2048
+                            0f 00 88 00 08
+                        4.  strm [si]
+                            0f 00 0c
+
+       strr
+           Description  Store Task Register
+           Syntax       strr register.16
+           Size         3
+           Example      1.  strr dx
+                            0f 00 ca
+
+       verrm
+           Description  Verify a Segment for Reading
+           Syntax       verrm offset.16
+                        verrm base displacement.8
+                        verrm base displacement.16
+                        verrm base
+           Size         3 - 5
+           Example      1.  verrm 0x4444
+                            0f 00 26 44 44
+                        2.  verrm [bx+si] 2
+                            0f 00 60 02
+                        3.  verrm [bx+si] 2048
+                            0f 00 a0 00 08
+                        4.  verrm [si]
+                            0f 00 24
+
+       verrr
+           Description  Verify a Segment for Reading
+           Syntax       verrr register.16
+           Size         3
+           Example      1.  verrr dx
+                            0f 00 e2
+
+       verwm
+           Description  Verify a Segment for Writing
+           Syntax       verwm offset.16
+                        verwm base displacement.8
+                        verwm base displacement.16
+                        verwm base
+           Size         3 - 5
+           Example      1.  verwm 0x4444
+                            0f 00 2e 44 44
+                        2.  verwm [bx+si] 2
+                            0f 00 68 02
+                        3.  verwm [bx+si] 2048
+                            0f 00 a8 00 08
+                        4.  verwm [si]
+                            0f 00 2c
+
+       verwr
+           Description  Verify a Segment for Writing
+           Syntax       verwr register.16
+           Size         3
+           Example      1.  verwr dx
+                            0f 00 ea
+
+AUTHOR
+       Justin Swartz <justin.swartz@risingedge.co.za>
+
+SEE ALSO
+       xfasm-80186(1), xfasm-8086(1), and the "Intel iAPX 80286 and 80287
+       Programmer's Reference Manual"
+
+xfasm 0.1                          May 2023                    xfasm-80286(1)

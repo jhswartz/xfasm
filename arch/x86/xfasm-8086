@@ -1,0 +1,795 @@
+al=0
+cl=1
+dl=2
+bl=3
+ah=4
+ch=5
+dh=6
+bh=7
+
+ax=0
+cx=1
+dx=2
+bx=3
+sp=4
+bp=5
+si=6
+di=7
+
+es=0
+cs=1
+ss=2
+ds=3
+
+AM_MOD=6
+AM_MOD_NONE=0
+AM_MOD_D8=1
+AM_MOD_D16=2
+AM_MOD_REG_IN_RM=3
+AM_REG=3
+AM_RM=0
+AM_OFFSET=6
+
+word()
+{
+	for value
+	do
+		byte $(($value & 255)) $(($value >> 8 & 255))
+	done
+}
+
+pack()
+{
+	local width=$1
+	local value=$2
+
+	case $width in
+	8)  byte $value ;;
+	16) word $value ;;
+	esac
+}
+
+opcode()
+{
+	for ordinal
+	do
+		byte $ordinal
+	done
+}
+
+modrm()
+{
+	local mode=$1
+	local reg=$2
+	local rm=$3
+	byte $(($rm | $reg << AM_REG | $mode << AM_MOD))
+}
+
+segment()
+{
+	reject bad_operand_count [ $# -ne 2 ]
+
+	local opcode=$1
+	local segment=$2
+
+	byte $(($opcode | $segment << AM_REG))
+}
+
+register0()
+{
+	reject bad_operand_count [ $# -ne 3 ]
+
+	local opcode=$1
+	local variant=$2
+	local register=$3
+
+	byte $opcode
+	modrm $AM_MOD_REG_IN_RM $variant $register
+}
+
+register1()
+{
+	reject bad_operand_count [ $# -ne 2 ]
+
+	local opcode=$1
+	local register=$2
+
+	byte $(($opcode | $register))
+}
+
+register_register()
+{
+	reject bad_operand_count [ $# -ne 3 ]
+
+	local opcode=$1
+	local x=$2
+	local y=$3
+
+	byte $opcode
+	modrm $AM_MOD_REG_IN_RM $x $y
+}
+
+register_segment()
+{
+	reject bad_operand_count [ $# -ne 3 ]
+
+	local opcode=$1
+	local register=$2
+	local segment=$3
+
+	byte $opcode
+	modrm $AM_MOD_REG_IN_RM $segment $register
+}
+
+segment_register()
+{
+	reject bad_operand_count [ $# -ne 3 ]
+
+	local opcode=$1
+	local segment=$2
+	local register=$3
+
+	byte $opcode
+	modrm $AM_MOD_REG_IN_RM $segment $register
+}
+
+relative()
+{
+	reject bad_operand_count [ $# -ne 3 ]
+
+	local width=$1
+	local opcode=$2
+
+	resolve $3
+	local offset=$?
+
+	byte $opcode
+	local branch_size=$((1 + $width / 8))
+	pack $width $(( (1 << $width) - $LOCATION - $branch_size + $offset + 1 ))
+}
+
+immediate()
+{
+	reject bad_operand_count [ $# -ne 3 ]
+
+	local width=$1
+	local opcode=$2
+	local immediate=$3
+
+	byte $opcode
+	pack $width $immediate
+}
+
+segment_offset()
+{
+	reject bad_operand_count [ $# -ne 3 ]
+
+	local opcode=$1
+	local segment=$2
+
+	resolve $3
+	local offset=$?
+
+	byte $opcode
+	word $offset $segment
+}
+
+immediate_register0()
+{
+	reject bad_operand_count [ $# -ne 5 ]
+
+	local width=$1
+	local opcode=$2
+	local variant=$3
+	local immediate=$4
+	local register=$5
+
+	byte $opcode
+	modrm $AM_MOD_REG_IN_RM $variant $register
+	pack $width $immediate
+}
+
+immediate_register1()
+{
+	reject bad_operand_count [ $# -ne 4 ]
+
+	local width=$1
+	local opcode=$2
+	local immediate=$3
+	local register=$4
+	opcode=$(($opcode | $register))
+
+	byte $opcode
+	pack $width $immediate
+}
+
+is_8bit()
+{
+	2>&- [ $1 -le 255 ]
+}
+
+immediate_memory()
+{
+	reject bad_operand_count [ $# -lt 5 -o $# -gt 6 ]
+
+	local width=$1
+	local opcode=$2
+	local variant=$3
+	local immediate=$4
+	local base=
+
+	case $5 in
+	"[bx+si]") base=0 ;;
+	"[bx+di]") base=1 ;;
+	"[bp+si]") base=2 ;;
+	"[bp+di]") base=3 ;;
+	"[si]")    base=4 ;;
+	"[di]")    base=5 ;;
+	"[bp]")    base=6 ;;
+	"[bx]")    base=7 ;;
+	esac
+
+	byte $opcode
+
+	if [ $# -eq 5 ]
+	then
+		if [ -z $base ]
+		then
+			resolve $5
+			local offset=$?
+			modrm $AM_MOD_NONE $variant $AM_OFFSET
+			word $offset
+		else
+			modrm $AM_MOD_NONE $variant $base
+		fi
+
+	elif [ $# -eq 6 ]
+	then
+		local displacement=$6
+
+		if is_8bit $displacement
+		then
+			modrm $AM_MOD_D8 $variant $base
+			byte $displacement
+		else
+			modrm $AM_MOD_D16 $variant $base
+			word $displacement
+		fi
+
+	fi
+
+	pack $width $immediate
+}
+
+memory()
+{
+	reject bad_operand_count [ $# -lt 3 -o $# -gt 4 ]
+
+	local opcode=$1
+	local variant=$2
+	local base=
+
+	case $3 in
+	"[bx+si]") base=0 ;;
+	"[bx+di]") base=1 ;;
+	"[bp+si]") base=2 ;;
+	"[bp+di]") base=3 ;;
+	"[si]")    base=4 ;;
+	"[di]")    base=5 ;;
+	"[bp]")    base=6 ;;
+	"[bx]")    base=7 ;;
+	esac
+
+	byte $opcode
+
+	if [ $# -eq 3 ]
+	then
+		if [ -z $base ]
+		then
+			resolve $3
+			local offset=$?
+			modrm $AM_MOD_NONE $variant $AM_OFFSET
+			word $offset
+		else
+			modrm $AM_MOD_NONE $variant $base
+		fi
+
+	elif [ $# -eq 4 ]
+	then
+		local displacement=$4
+
+		if is_8bit $displacement
+		then
+			modrm $AM_MOD_D8 $variant $base
+			byte $displacement
+		else
+			modrm $AM_MOD_D16 $variant $base
+			word $displacement
+		fi
+	fi
+}
+
+memory_register()
+{
+	reject bad_operand_count [ $# -lt 3 -o $# -gt 4 ]
+
+	local opcode=$1
+	local base=
+
+	case $2 in
+	"[bx+si]") base=0 ;;
+	"[bx+di]") base=1 ;;
+	"[bp+si]") base=2 ;;
+	"[bp+di]") base=3 ;;
+	"[si]")    base=4 ;;
+	"[di]")    base=5 ;;
+	"[bp]")    base=6 ;;
+	"[bx]")    base=7 ;;
+	esac
+
+	byte $opcode 
+
+	if [ $# -eq 3 ]
+	then
+		local register=$3
+
+		if [ -z $base ]
+		then
+			resolve $2
+			local offset=$?
+			modrm $AM_MOD_NONE $register $AM_OFFSET
+			word $offset
+		else
+			modrm $AM_MOD_NONE $register $base
+		fi
+
+	elif [ $# -eq 4 ]
+	then
+		local displacement=$3
+		local register=$4
+
+		if is_8bit $displacement
+		then
+			modrm $AM_MOD_D8 $register $base
+			byte $displacement
+		else
+			modrm $AM_MOD_D16 $register $base
+			word $displacement
+		fi
+	fi
+}
+
+register_memory()
+{
+	reject bad_operand_count [ $# -lt 3 -o $# -gt 4 ]
+
+	local opcode=$1
+	local register=$2
+	local base=
+
+	case $3 in
+	"[bx+si]") base=0 ;;
+	"[bx+di]") base=1 ;;
+	"[bp+si]") base=2 ;;
+	"[bp+di]") base=3 ;;
+	"[si]")    base=4 ;;
+	"[di]")    base=5 ;;
+	"[bp]")    base=6 ;;
+	"[bx]")    base=7 ;;
+	esac
+
+	byte $opcode
+
+	if [ $# -eq 3 ]
+	then
+		if [ -z $base ]
+		then
+			resolve $3
+			local offset=$?
+			modrm $AM_MOD_NONE $register $AM_OFFSET
+			word $offset
+		else
+			modrm $AM_MOD_NONE $register $base
+		fi
+
+	elif [ $# -eq 4 ]
+	then
+		local displacement=$4
+
+		if is_8bit $displacement
+		then
+			modrm $AM_MOD_D8 $register $base
+			byte $displacement
+		else
+			modrm $AM_MOD_D16 $register $base
+			word $displacement
+		fi
+	fi
+}
+
+encode_8086()
+{
+	local mnemonic=$1
+	shift 1
+
+	case $mnemonic in
+		"aaa")      opcode 0067 ;;
+		"aad")      opcode 0325 0012 ;;
+		"aam")      opcode 0324 0012 ;;
+		"aas")      opcode 0077 ;;
+		"adcb8m")   immediate_memory 8 0202 0002 $@ ;;
+		"adcb8r")   immediate_register0 8 0202 0002 $@ ;;
+		"adcbi")    immediate 8 0024 $@ ;;
+		"adcbim")   immediate_memory 8 0200 0002 $@ ;;
+		"adcbir")   immediate_register0 8 0200 0002 $@ ;;
+		"adcbmr")   memory_register 0022 $@ ;;
+		"adcbrm")   register_memory 0020 $@ ;;
+		"adcbrr")   register_register 0020 $@ ;;
+		"adcw8m")   immediate_memory 8 0203 0002 $@ ;;
+		"adcw8r")   immediate_register0 8 0203 0002 $@ ;;
+		"adcwi")    immediate 16 0025 $@ ;;
+		"adcwim")   immediate_memory 16 0201 0002 $@ ;;
+		"adcwir")   immediate_register0 16 0201 0002 $@ ;;
+		"adcwmr")   memory_register 0023 $@ ;;
+		"adcwrm")   register_memory 0021 $@ ;;
+		"adcwrr")   register_register 0021 $@ ;;
+		"addb8m")   immediate_memory 8 0202 0000 $@ ;;
+		"addb8r")   immediate_register0 8 0202 0000 $@ ;;
+		"addbi")    immediate 8 0004 $@ ;;
+		"addbim")   immediate_memory 8 0200 0000 $@ ;;
+		"addbir")   immediate_register0 8 0200 0000 $@ ;;
+		"addbmr")   memory_register 0002 $@ ;;
+		"addbrm")   register_memory 0000 $@ ;;
+		"addbrr")   register_register 0000 $@ ;;
+		"addw8m")   immediate_memory 8 0203 0000 $@ ;;
+		"addw8r")   immediate_register0 8 0203 0000 $@ ;;
+		"addwi")    immediate 16 0005 $@ ;;
+		"addwim")   immediate_memory 16 0201 0000 $@ ;;
+		"addwir")   immediate_register0 16 0201 0000 $@ ;;
+		"addwmr")   memory_register 0003 $@ ;;
+		"addwrm")   register_memory 0001 $@ ;;
+		"addwrr")   register_register 0001 $@ ;;
+		"andb8m")   immediate_memory 8 0202 0004 $@ ;;
+		"andb8r")   immediate_register0 8 0202 0004 $@ ;;
+		"andbi")    immediate 8 0044 $@ ;;
+		"andbim")   immediate_memory 8 0200 0004 $@ ;;
+		"andbir")   immediate_register0 8 0200 0004 $@ ;;
+		"andbmr")   memory_register 0042 $@ ;;
+		"andbrm")   register_memory 0040 $@ ;;
+		"andbrr")   register_register 0040 $@ ;;
+		"andw8m")   immediate_memory 8 0203 0004 $@ ;;
+		"andw8r")   immediate_register0 8 0203 0004 $@ ;;
+		"andwi")    immediate 16 0045 $@ ;;
+		"andwim")   immediate_memory 16 0201 0004 $@ ;;
+		"andwir")   immediate_register0 16 0201 0004 $@ ;;
+		"andwmr")   memory_register 0043 $@ ;;
+		"andwrm")   register_memory 0041 $@ ;;
+		"andwrr")   register_register 0041 $@ ;;
+		"callf")    segment_offset 0232 $@ ;; 
+		"callfm")   memory 0377 0003 $@ ;;
+		"calln")    relative 16 0350 $@ ;;
+		"callnm")   memory 0377 0002 $@ ;;
+		"callnr")   register0 0377 0002 $@ ;;
+		"cbw")      opcode 0230 ;;
+		"clc")      opcode 0370 ;;
+		"cld")      opcode 0374 ;;
+		"cli")      opcode 0372 ;;
+		"cmc")      opcode 0365 ;;
+		"cmpb8m")   immediate_memory 8 0202 0007 $@ ;;
+		"cmpb8r")   immediate_register0 8 0202 0007 $@ ;;
+		"cmpbi")    immediate 8 0074 $@ ;;
+		"cmpbim")   immediate_memory 8 0200 0007 $@ ;;
+		"cmpbir")   immediate_register0 8 0200 0007 $@ ;;
+		"cmpbmr")   memory_register 0072 $@ ;;
+		"cmpbrm")   register_memory 0070 $@ ;;
+		"cmpbrr")   register_register 0072 $@ ;;
+		"cmpsb")    opcode 0246 ;;
+		"cmpsw")    opcode 0247 ;;
+		"cmpw8m")   immediate_memory 8 0203 0007 $@ ;;
+		"cmpw8r")   immediate_register0 8 0203 0007 $@ ;;
+		"cmpwi")    immediate 16 0075 $@ ;;
+		"cmpwim")   immediate_memory 16 0201 0007 $@ ;;
+		"cmpwir")   immediate_register0 16 0201 0007 $@ ;;
+		"cmpwmr")   memory_register 0073 $@ ;;
+		"cmpwrm")   register_memory 0071 $@ ;;
+		"cmpwrr")   register_register 0073 $@ ;;
+		"cs")       opcode 0056; encode $@ ;;
+		"cwd")      opcode 0231 ;;
+		"daa")      opcode 0047 ;;
+		"das")      opcode 0057 ;;
+		"decbm")    memory 0376 0001 $@ ;;
+		"decbr")    register0 0376 0001 $@ ;;
+		"decwm")    memory 0377 0001 $@ ;;
+		"decwr")    register1 0110 $@ ;;
+		"divbm")    memory 0366 0006 $@ ;;
+		"divbr")    register0 0366 0006 $@ ;;
+		"divwm")    memory 0367 0006 $@ ;;
+		"divwr")    register0 0367 0006 $@ ;;
+		"ds")       opcode 0076; encode $@ ;;
+		"es")       opcode 0046; encode $@ ;;
+		"fwait")    opcode 0233 ;;
+		"hlt")      opcode 0364 ;;
+		"idivbm")   memory 0366 0007 $@ ;;
+		"idivbr")   register0 0366 0007 $@ ;;
+		"idivwm")   memory 0367 0007 $@ ;;
+		"idivwr")   register0 0367 0007 $@ ;;
+		"imulbm")   memory 0366 0005 $@ ;;
+		"imulbr")   register0 0366 0005 $@ ;;
+		"imulwm")   memory 0367 0005 $@ ;;
+		"imulwr")   register0 0367 0005 $@ ;;
+		"inb")      opcode 0354 ;;
+		"inbi")     immediate 8 0344 $@ ;;
+		"incbm")    memory 0376 0000 $@ ;;
+		"incbr")    register0 0376 0000 $@ ;;
+		"incwm")    memory 0377 0000 $@ ;;
+		"incwr")    register1 0100 $@ ;;
+		"int")      immediate 8 0315 $@ ;;
+		"int3")     opcode 0314 ;;
+		"into")     opcode 0316 ;;
+		"inw")      opcode 0355 ;;
+		"inwi")     immediate 8 0345 $@ ;;
+		"iret")     opcode 0317 ;;
+		"ja")       relative 8 0167 $@ ;;
+		"jae")      relative 8 0163 $@ ;;
+		"jb")       relative 8 0162 $@ ;;
+		"jbe")      relative 8 0166 $@ ;;
+		"jc")       relative 8 0162 $@ ;;
+		"jcxz")     relative 8 0343 $@ ;;
+		"je")       relative 8 0164 $@ ;;
+		"jg")       relative 8 0177 $@ ;;
+		"jge")      relative 8 0175 $@ ;;
+		"jl")       relative 8 0174 $@ ;;
+		"jle")      relative 8 0176 $@ ;;
+		"jmpf")     segment_offset 0352 $@ ;;
+		"jmpfm")    memory 0377 0005 $@ ;;
+		"jmpn")     relative 16 0351 $@ ;;
+		"jmpnm")    memory 0377 0004 $@ ;;
+		"jmpnr")    register0 0377 0004 $@ ;;
+		"jmps")     relative 8 0353 $@ ;;
+		"jna")      relative 8 0166 $@ ;;
+		"jnae")     relative 8 0162 $@ ;;
+		"jnb")      relative 8 0163 $@ ;;
+		"jnbe")     relative 8 0167 $@ ;;
+		"jnc")      relative 8 0163 $@ ;;
+		"jne")      relative 8 0165 $@ ;;
+		"jng")      relative 8 0176 $@ ;;
+		"jnge")     relative 8 0174 $@ ;;
+		"jnl")      relative 8 0175 $@ ;;
+		"jnle")     relative 8 0177 $@ ;;
+		"jno")      relative 8 0161 $@ ;;
+		"jnp")      relative 8 0173 $@ ;;
+		"jns")      relative 8 0171 $@ ;;
+		"jnz")      relative 8 0165 $@ ;;
+		"jo")       relative 8 0160 $@ ;;
+		"jp")       relative 8 0172 $@ ;;
+		"jpe")      relative 8 0172 $@ ;;
+		"jpo")      relative 8 0173 $@ ;;
+		"js")       relative 8 0170 $@ ;;
+		"jz")       relative 8 0164 $@ ;;
+		"lahf")     opcode 0237 ;;
+		"lds")      memory_register 0305 $@ ;;
+		"lea")      memory_register 0215 $@ ;;
+		"les")      memory_register 0304 $@ ;;
+		"loadb")    immediate 16 0242 $@ ;;
+		"loadw")    immediate 16 0243 $@ ;;
+		"lock")     opcode 0360; encode $@ ;;
+		"lodsb")    opcode 0254 ;;
+		"lodsw")    opcode 0255 ;;
+		"loop")     immediate 8 0342 $@ ;;
+		"loope")    immediate 8 0341 $@ ;;
+		"loopne")   immediate 8 0340 $@ ;;
+		"loopnz")   immediate 8 0340 $@ ;;
+		"loopz")    immediate 8 0341 $@ ;;
+		"movbim")   immediate_memory 8 0306 0000 $@ ;;
+		"movbir")   immediate_register1 8 0260 $@ ;;
+		"movbmr")   memory_register 0212 $@ ;;
+		"movbrm")   register_memory 0210 $@ ;;
+		"movbrr")   register_register 0212 $@ ;;
+		"movsb")    opcode 0244 ;;
+		"movsw")    opcode 0245 ;;
+		"movwim")   immediate_memory 16 0307 0000 $@ ;;
+		"movwir")   immediate_register1 16 0270 $@ ;;
+		"movwmr")   memory_register 0213 $@ ;;
+		"movwms")   memory_register 0216 $@ ;;
+		"movwrm")   register_memory 0211 $@ ;;
+		"movwrr")   register_register 0213 $@ ;;
+		"movwrs")   register_segment 0216 $@ ;;
+		"movwsm")   register_memory 0214 $@ ;;
+		"movwsr")   segment_register 0214 $@ ;;
+		"mulbm")    memory 0366 0004 $@ ;;
+		"mulbr")    register0 0366 0004 $@ ;;
+		"mulwm")    memory 0367 0004 $@ ;;
+		"mulwr")    register0 0367 0004 $@ ;;
+		"negbm")    memory 0366 0003 $@ ;;
+		"negbr")    register0 0366 0003 $@ ;;
+		"negwm")    memory 0367 0003 $@ ;;
+		"negwr")    register0 0367 0003 $@ ;;
+		"nop")      opcode 0220 ;;
+		"notbm")    memory 0366 0002 $@ ;;
+		"notbr")    register0 0366 0002 $@ ;;
+		"notwm")    memory 0367 0002 $@ ;;
+		"notwr")    register0 0367 0002 $@ ;;
+		"orb8m")    immediate_memory 8 0202 0001 $@ ;;
+		"orb8r")    immediate_register0 8 0202 0001 $@ ;;
+		"orbi")     immediate 8 0014 $@ ;;
+		"orbim")    immediate_memory 8 0200 0001 $@ ;;
+		"orbir")    immediate_register0 8 0200 0001 $@ ;;
+		"orbmr")    memory_register 0012 $@ ;;
+		"orbrm")    register_memory 0010 $@ ;;
+		"orbrr")    register_register 0010 $@ ;;
+		"orw8m")    immediate_memory 8 0203 0001 $@ ;;
+		"orw8r")    immediate_register0 8 0203 0001 $@ ;;
+		"orwi")     immediate 16 0015 $@ ;;
+		"orwim")    immediate_memory 16 0201 0001 $@ ;;
+		"orwir")    immediate_register0 16 0201 0001 $@ ;;
+		"orwmr")    memory_register 0013 $@ ;;
+		"orwrm")    register_memory 0011 $@ ;;
+		"orwrr")    register_register 0011 $@ ;;
+		"outb")     opcode 0356 ;;
+		"outbi")    immediate 8 0346 $@ ;;
+		"outw")     opcode 0357 ;;
+		"outwi")    immediate 8 0347 $@ ;;
+		"popf")     opcode 0235 ;;
+		"popwm")    memory 0217 0000 $@ ;;
+		"popwr")    register1 0130 $@ ;;
+		"popws")    segment 0007 $@ ;;
+		"pushf")    opcode 0234 ;;
+		"pushwm")   memory 0377 0006 $@ ;;
+		"pushwr")   register1 0120 $@ ;;
+		"pushws")   segment 0006 $@ ;;
+		"rcl1bm")   memory 0320 0002 $@ ;;
+		"rcl1br")   register0 0320 0002 $@ ;;
+		"rcl1wm")   memory 0321 0002 $@ ;;
+		"rcl1wr")   register0 0321 0002 $@ ;;
+		"rclbm")    memory 0322 0002 $@ ;;
+		"rclbr")    register0 0322 0002 $@ ;;
+		"rclwm")    memory 0323 0002 $@ ;;
+		"rclwr")    register0 0323 0002 $@ ;;
+		"rcr1bm")   memory 0320 0003 $@ ;;
+		"rcr1br")   register0 0320 0003 $@ ;;
+		"rcr1wm")   memory 0321 0003 $@ ;;
+		"rcr1wr")   register0 0321 0003 $@ ;;
+		"rcrbm")    memory 0322 0003 $@ ;;
+		"rcrbr")    register0 0322 0003 $@ ;;
+		"rcrwm")    memory 0323 0003 $@ ;;
+		"rcrwr")    register0 0323 0003 $@ ;;
+		"rep")      opcode 0363; encode $@ ;;
+		"repe")     opcode 0363; encode $@ ;;
+		"repne")    opcode 0362; encode $@ ;;
+		"repnz")    opcode 0362; encode $@ ;;
+		"repz")     opcode 0363; encode $@ ;;
+		"retf")     opcode 0313 ;;
+		"retfi")    immediate 16 0312 $@ ;;
+		"retn")     opcode 0303 ;;
+		"retni")    immediate 16 0302 $@ ;;
+		"rol1bm")   memory 0320 0000 $@ ;;
+		"rol1br")   register0 0320 0000 $@ ;;
+		"rol1wm")   memory 0321 0000 $@ ;;
+		"rol1wr")   register0 0321 0000 $@ ;;
+		"rolbm")    memory 0322 0000 $@ ;;
+		"rolbr")    register0 0322 0000 $@ ;;
+		"rolwm")    memory 0323 0000 $@ ;;
+		"rolwr")    register0 0323 0000 $@ ;;
+		"ror1bm")   memory 0322 0001 $@ ;;
+		"ror1br")   register0 0322 0001 $@ ;;
+		"ror1wm")   memory 0323 0001 $@ ;;
+		"ror1wr")   register0 0323 0001 $@ ;;
+		"rorbm")    memory 0322 0001 $@ ;;
+		"rorbr")    register0 0322 0001 $@ ;;
+		"rorwm")    memory 0323 0001 $@ ;;
+		"rorwr")    register0 0323 0001 $@ ;;
+		"sahf")     opcode 0236 ;;
+		"sal1bm")   memory 0320 0006 $@ ;;
+		"sal1br")   register0 0320 0006 $@ ;;
+		"sal1wm")   memory 0321 0006 $@ ;;
+		"sal1wr")   register0 0321 0006 $@ ;;
+		"salbm")    memory 0322 0006 $@ ;;
+		"salbr")    register0 0322 0006 $@ ;;
+		"salwm")    memory 0323 0006 $@ ;;
+		"salwr")    register0 0323 0006 $@ ;;
+		"sar1bm")   memory 0320 0007 $@ ;;
+		"sar1br")   register0 0320 0007 $@ ;;
+		"sar1wm")   memory 0321 0007 $@ ;;
+		"sar1wr")   register0 0321 0007 $@ ;;
+		"sarbm")    memory 0322 0007 $@ ;;
+		"sarbr")    register0 0322 0007 $@ ;;
+		"sarwm")    memory 0323 0007 $@ ;;
+		"sarwr")    register0 0323 0007 $@ ;;
+		"sbbb8m")   immediate_memory 8 0202 0003 $@ ;;
+		"sbbb8r")   immediate_register0 8 0202 0003 $@ ;;
+		"sbbbi")    immediate 8 0034 $@ ;;
+		"sbbbim")   immediate_memory 8 0200 0003 $@ ;;
+		"sbbbir")   immediate_register0 8 0200 0003 $@ ;;
+		"sbbbmr")   memory_register 0032 $@ ;;
+		"sbbbrm")   register_memory 0030 $@ ;;
+		"sbbbrr")   register_register 0030 $@ ;;
+		"sbbw8m")   immediate_memory 8 0203 0003 $@ ;;
+		"sbbw8r")   immediate_register0 8 0203 0003 $@ ;;
+		"sbbwi")    immediate 16 0035 $@ ;;
+		"sbbwim")   immediate_memory 16 0201 0003 $@ ;;
+		"sbbwir")   immediate_register0 16 0201 0003 $@ ;;
+		"sbbwmr")   memory_register 0033 $@ ;;
+		"sbbwrm")   register_memory 0031 $@ ;;
+		"sbbwrr")   register_register 0031 $@ ;;
+		"scasb")    opcode 0256 ;;
+		"scasw")    opcode 0257 ;;
+		"shl1bm")   memory 0320 0004 $@ ;;
+		"shl1br")   register0 0320 0004 $@ ;;
+		"shl1wm")   memory 0321 0004 $@ ;;
+		"shl1wr")   register0 0321 0004 $@ ;;
+		"shlbm")    memory 0322 0004 $@ ;;
+		"shlbr")    register0 0322 0004 $@ ;;
+		"shlwm")    memory 0323 0004 $@ ;;
+		"shlwr")    register0 0323 0004 $@ ;;
+		"shr1bm")   memory 0320 0005 $@ ;;
+		"shr1br")   register0 0320 0005 $@ ;;
+		"shr1wm")   memory 0321 0005 $@ ;;
+		"shr1wr")   register0 0321 0005 $@ ;;
+		"shrbm")    memory 0322 0005 $@ ;;
+		"shrbr")    register0 0322 0005 $@ ;;
+		"shrwm")    memory 0323 0005 $@ ;;
+		"shrwr")    register0 0323 0005 $@ ;;
+		"ss")       opcode 0066; encode $@ ;;
+		"stc")      opcode 0371 ;;
+		"std")      opcode 0375 ;;
+		"sti")      opcode 0373 ;;
+		"storb")    immediate 16 0240 $@ ;;
+		"storw")    immediate 16 0241 $@ ;;
+		"stosb")    opcode 0252 ;;
+		"stosw")    opcode 0253 ;;
+		"subb8m")   immediate_memory 8 0202 0005 $@ ;;
+		"subb8r")   immediate_register0 8 0202 0005 $@ ;;
+		"subbmr")   memory_register 0052 $@ ;;
+		"subbi")    immediate 8 0054 $@ ;;
+		"subbim")   immediate_memory 8 0200 0005 $@ ;;
+		"subbir")   immediate_register0 8 0200 0005 $@ ;;
+		"subbrm")   register_memory 0050 $@ ;;
+		"subbrr")   register_register 0050 $@ ;;
+		"subw8m")   immediate_memory 8 0203 0005 $@ ;;
+		"subw8r")   immediate_register0 8 0203 0005 $@ ;;
+		"subwmr")   memory_register 0053 $@ ;;
+		"subwi")    immediate 16 0055 $@ ;;
+		"subwim")   immediate_memory 16 0201 0005 $@ ;;
+		"subwir")   immediate_register0 16 0201 0005 $@ ;;
+		"subwrm")   register_memory 0051 $@ ;;
+		"subwrr")   register_register 0051 $@ ;;
+		"testbi")   immediate 8 0250 $@ ;;
+		"testbim")  immediate_memory 8 0366 0000 $@ ;;
+		"testbir")  immediate_register0 8 0366 0000 $@ ;;
+		"testbrm")  register_memory 0204 $@ ;;
+		"testbrr")  register_register 0204 $@ ;;
+		"testwi")   immediate 16 0251 $@ ;;
+		"testwim")  immediate_memory 16 0367 0000 $@ ;;
+		"testwir")  immediate_register0 16 0367 0000 $@ ;;
+		"testwrm")  register_memory 0205 $@ ;;
+		"testwrr")  register_register 0205 $@ ;;
+		"xchgbrm")  register_memory 0206 $@ ;;
+		"xchgbrr")  register_register 0206 $@ ;;
+		"xchgwr")   register1 0220 $@ ;;
+		"xchgwrm")  register_memory 0207 $@ ;;
+		"xchgwrr")  register_register 0207 $@ ;;
+		"xlat")     opcode 0327 ;;
+		"xorb8m")   immediate_memory 8 0202 0006 $@ ;;
+		"xorb8r")   immediate_register0 8 0202 0006 $@ ;;
+		"xorbmr")   memory_register 0062 $@ ;;
+		"xorbi")    immediate 8 0064 $@ ;;
+		"xorbim")   immediate_memory 8 0200 0006 $@ ;;
+		"xorbir")   immediate_register0 8 0200 0006 $@ ;;
+		"xorbrm")   register_memory 0060 $@ ;;
+		"xorbrr")   register_register 0060 $@ ;;
+		"xorw8m")   immediate_memory 8 0203 0006 $@ ;;
+		"xorw8r")   immediate_register0 8 0203 0006 $@ ;;
+		"xorwmr")   memory_register 0063 $@ ;;
+		"xorwi")    immediate 16 0065 $@ ;;
+		"xorwim")   immediate_memory 16 0201 0006 $@ ;;
+		"xorwir")   immediate_register0 16 0201 0006 $@ ;;
+		"xorwrm")   register_memory 0061 $@ ;;
+		"xorwrr")   register_register 0061 $@ ;;
+		*)          encode_directive $mnemonic $@ ;;
+	esac
+}
+
+encode()
+{
+	encode_8086 $@
+}

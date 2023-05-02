@@ -1,0 +1,41 @@
+encode_80286()
+{
+	local mnemonic=$1
+	shift 1
+
+	case $mnemonic in
+		"arplrm")  register_memory 0143 $@ ;;
+		"arplrr")  register_register 0143 $@ ;;
+		"clts")    opcode 0017; opcode 0006 ;;
+		"larmr")   opcode 0017; memory_register 0002 $@ ;;
+		"larrr")   opcode 0017; register_register 0002 $@ ;;
+		"lgdtwm")  opcode 0017; memory 0001 0002 $@ ;;
+		"lidtwm")  opcode 0017; memory 0001 0003 $@ ;;
+		"lldtm")   opcode 0017; memory 0000 0002 $@ ;;
+		"lldtr")   opcode 0017; register0 0000 0002 $@ ;;
+		"lmswm")   opcode 0017; memory 0001 0006 $@ ;;
+		"lmswr")   opcode 0017; register0 0001 0006 $@ ;;
+		"lslmr")   opcode 0017; memory_register 0003 $@ ;;
+		"lslrr")   opcode 0017; register_register 0003 $@ ;;
+		"ltrm")    opcode 0017; memory 0000 0003 $@ ;;
+		"ltrr")    opcode 0017; register0 0000 0003 $@ ;;
+		"sgdtwm")  opcode 0017; memory 0001 0000 $@ ;;
+		"sidtwm")  opcode 0017; memory 0001 0001 $@ ;;
+		"sldtm")   opcode 0017; memory 0000 0000 $@ ;;
+		"sldtr")   opcode 0017; register0 0000 0000 $@ ;;
+		"smswm")   opcode 0017; memory 0001 0004 $@ ;;
+		"smswr")   opcode 0017; register0 0001 0004 $@ ;;
+		"strm")    opcode 0017; memory 0000 0001 $@ ;;
+		"strr")    opcode 0017; register0 0000 0001 $@ ;;
+		"verrm")   opcode 0017; memory 0000 0004 $@ ;;
+		"verrr")   opcode 0017; register0 0000 0004 $@ ;;
+		"verwm")   opcode 0017; memory 0000 0005 $@ ;;
+		"verwr")   opcode 0017; register0 0000 0005 $@ ;;
+		*)         encode_80186 $mnemonic $@ ;;
+	esac
+}
+
+encode()
+{
+	encode_80286 $@
+}

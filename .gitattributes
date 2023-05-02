@@ -1,2 +1,3 @@
 arch/x86/doc/* linguist-documentation
 doc/* linguist-documentation
+*.asm linguist-detectable=false

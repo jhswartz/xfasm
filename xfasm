@@ -12,7 +12,7 @@ PROCESS=encode
 
 usage()
 {
-	printf "usage: fcasm EXTENSION ...\n"
+	printf "usage: xfasm TARGET ... < SOURCE > OBJECT\n"
 }
 
 abort()
